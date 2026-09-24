@@ -1,9 +1,6 @@
 import User from '../models/User.js';
 import generateToken from '../utils/generateToken.js';
 
-// @desc    Register a new campus user
-// @route   POST /api/auth/register
-// @access  Public
 export const registerUser = async (req, res, next) => {
   try {
     const { name, email, password, campusName, skillsOffered, skillsNeeded } = req.body;
@@ -30,12 +27,11 @@ export const registerUser = async (req, res, next) => {
       campusName: campusName || 'Campus Node',
       skillsOffered: skillsOffered || [],
       skillsNeeded: skillsNeeded || [],
-      escrowCredits: 3, // 3 free credits upon signup
+      escrowCredits: 3,
       reputationScore: 5.0
     });
 
     const token = generateToken(res, user._id);
-
     const userObj = user.toObject();
     delete userObj.password;
 
@@ -50,9 +46,6 @@ export const registerUser = async (req, res, next) => {
   }
 };
 
-// @desc    Authenticate campus user & get token
-// @route   POST /api/auth/login
-// @access  Public
 export const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -81,7 +74,6 @@ export const loginUser = async (req, res, next) => {
     }
 
     const token = generateToken(res, user._id);
-
     const userObj = user.toObject();
     delete userObj.password;
 
@@ -95,9 +87,6 @@ export const loginUser = async (req, res, next) => {
   }
 };
 
-// @desc    Logout user / clear cookie
-// @route   POST /api/auth/logout
-// @access  Private
 export const logoutUser = async (req, res) => {
   res.cookie('token', '', {
     httpOnly: true,
@@ -110,9 +99,6 @@ export const logoutUser = async (req, res) => {
   });
 };
 
-// @desc    Get current user profile
-// @route   GET /api/auth/me
-// @access  Private
 export const getCurrentUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);

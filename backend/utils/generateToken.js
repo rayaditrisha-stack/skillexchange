@@ -1,11 +1,5 @@
 import jwt from 'jsonwebtoken';
 
-/**
- * Generate JWT token & set httpOnly cookie on response
- * @param {Response} res Express response object
- * @param {string} userId MongoDB User ID
- * @returns {string} JWT Token
- */
 const generateToken = (res, userId) => {
   const secret = process.env.JWT_SECRET || 'skillmesh_decentralized_campus_secret_key_2026_998877';
   const token = jwt.sign({ id: userId }, secret, {

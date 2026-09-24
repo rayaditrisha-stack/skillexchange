@@ -12,7 +12,6 @@ const skillOfferedSchema = new mongoose.Schema({
   verified: { type: Boolean, default: true }
 }, { _id: true });
 
-// Campus domain validation regex: .edu or .ac.in or .edu.* or .ac.* or .org
 const campusEmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(edu|ac\.in|edu\.[a-z]{2}|ac\.[a-z]{2}|org)$/i;
 
 const userSchema = new mongoose.Schema({
@@ -71,7 +70,6 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Encrypt password using bcrypt before saving
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) {
     return next();
@@ -81,7 +79,6 @@ userSchema.pre('save', async function(next) {
   next();
 });
 
-// Instance method to compare password
 userSchema.methods.matchPassword = async function(enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };

@@ -4,12 +4,9 @@ import User from '../models/User.js';
 export const protect = async (req, res, next) => {
   let token;
 
-  // 1. Read token from httpOnly cookie
   if (req.cookies && req.cookies.token) {
     token = req.cookies.token;
-  }
-  // 2. Fallback to Authorization Header Bearer token
-  else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+  } else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     token = req.headers.authorization.split(' ')[1];
   }
 

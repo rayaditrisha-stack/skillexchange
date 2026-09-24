@@ -4,7 +4,7 @@ import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.use(protect); // Protect all swap routes
+router.use(protect);
 
 router.post('/', createSwapSession);
 router.get('/', getMySwapSessions);

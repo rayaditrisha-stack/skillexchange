@@ -1,9 +1,6 @@
 import SwapSession from '../models/SwapSession.js';
 import User from '../models/User.js';
 
-// @desc    Request a new Skill Swap Session (holds 1 credit in escrow)
-// @route   POST /api/swaps
-// @access  Private
 export const createSwapSession = async (req, res, next) => {
   try {
     const { peerId, skillName, role, sessionTime, notes } = req.body;
@@ -29,7 +26,6 @@ export const createSwapSession = async (req, res, next) => {
       learnerId = req.user._id;
     }
 
-    // Verify learner has sufficient escrow credits
     const learner = await User.findById(learnerId);
     if (learner.escrowCredits < 1) {
       return res.status(400).json({
@@ -63,9 +59,6 @@ export const createSwapSession = async (req, res, next) => {
   }
 };
 
-// @desc    Get user's swap sessions
-// @route   GET /api/swaps
-// @access  Private
 export const getMySwapSessions = async (req, res, next) => {
   try {
     const userId = req.user._id;
@@ -87,9 +80,6 @@ export const getMySwapSessions = async (req, res, next) => {
   }
 };
 
-// @desc    Dual Confirmation Signature & Escrow Release
-// @route   PUT /api/swaps/:id/confirm
-// @access  Private
 export const signSwapConfirmation = async (req, res, next) => {
   try {
     const sessionId = req.params.id;
@@ -111,7 +101,6 @@ export const signSwapConfirmation = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Session has already been completed and escrow released.' });
     }
 
-    // Apply signature
     if (isMentor) {
       session.dualConfirmation.mentorSigned = true;
     }
@@ -125,7 +114,6 @@ export const signSwapConfirmation = async (req, res, next) => {
 
     let escrowReleased = false;
 
-    // DUAL CONFIRMATION CHECK: If BOTH signed, transfer escrow credits & boost reputation!
     if (session.dualConfirmation.mentorSigned && session.dualConfirmation.learnerSigned) {
       session.status = 'completed';
       escrowReleased = true;
@@ -141,7 +129,6 @@ export const signSwapConfirmation = async (req, res, next) => {
         }
         mentor.escrowCredits += session.creditsEscrowed;
 
-        // Reputation score increment
         learner.reputationScore = Math.min(5.0, Number((learner.reputationScore + 0.05).toFixed(1)));
         mentor.reputationScore = Math.min(5.0, Number((mentor.reputationScore + 0.1).toFixed(1)));
 

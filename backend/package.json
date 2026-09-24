@@ -5,6 +5,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
+    "build": "echo 'No build step required for Node.js backend'",
     "start": "node server.js",
     "dev": "node server.js",
     "seed": "node scripts/seedData.js"

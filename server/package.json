@@ -5,6 +5,7 @@
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
+    "build": "echo 'No build step required for Node.js server'",
     "start": "node index.js",
     "dev": "node index.js",
     "seed": "node seed/seedData.js"
