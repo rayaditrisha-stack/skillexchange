@@ -22,7 +22,6 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl)
     if (!origin) return callback(null, true);
     if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production') {
       return callback(null, true);
@@ -37,15 +36,24 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-// Mount API Routes
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/users', require('./routes/userRoutes'));
-app.use('/api/swaps', require('./routes/swapRoutes'));
+// Root route
+app.get('/', (req, res) => {
+  res.status(200).json({
+    message: '⚡ SkillMesh Campus Skill Exchange API Service is Live!',
+    healthCheck: '/api/health',
+    status: 'Operational'
+  });
+});
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', service: 'SkillMesh API Engine v1.0', timestamp: new Date() });
 });
+
+// Mount API Routes
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
+app.use('/api/swaps', require('./routes/swapRoutes'));
 
 // Centralized error handler middleware
 app.use(errorHandler);
@@ -54,7 +62,6 @@ app.use(errorHandler);
 const startServer = async () => {
   await connectDB();
 
-  // Auto-seed if database is empty
   const count = await User.countDocuments();
   if (count === 0) {
     console.log('[Server] No users detected in database. Triggering automatic seed...');

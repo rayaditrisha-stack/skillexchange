@@ -37,15 +37,29 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-// Mount API Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/swaps', swapRoutes);
-app.use('/api/matches', matchRoutes);
+// Root welcome route for browser checks & health monitors
+app.get('/', (req, res) => {
+  res.status(200).json({
+    message: '⚡ SkillMesh Decentralized Campus Protocol API Service is Live!',
+    healthCheck: '/api/health',
+    status: 'Operational',
+    endpoints: {
+      auth: '/api/auth',
+      swaps: '/api/swaps',
+      matches: '/api/matches'
+    }
+  });
+});
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', service: 'SkillMesh Dedicated Backend v1.0', timestamp: new Date() });
 });
+
+// Mount API Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/swaps', swapRoutes);
+app.use('/api/matches', matchRoutes);
 
 // Centralized Error Handling
 app.use(notFound);
