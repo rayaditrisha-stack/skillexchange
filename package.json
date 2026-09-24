@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "build": "cd client && npm install && npm run build",
-    "server": "npm --prefix server run dev",
+    "backend": "npm --prefix backend start",
+    "server": "npm --prefix backend start",
     "client": "npm --prefix client run dev",
-    "dev": "concurrently \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
-    "seed": "npm --prefix server run seed",
-    "install:all": "npm install && npm --prefix server install && npm --prefix client install"
+    "dev": "concurrently \"npm --prefix backend start\" \"npm --prefix client run dev\"",
+    "seed": "npm --prefix backend run seed",
+    "install:all": "npm install && npm --prefix backend install && npm --prefix client install"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
