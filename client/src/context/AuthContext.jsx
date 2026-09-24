@@ -3,8 +3,32 @@ import axios from 'axios';
 
 const AuthContext = createContext();
 
-// Setup axios defaults for httpOnly cookies
+// Determine API Base URL for local vs deployment environments
+const getBaseURL = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  // If running locally, Vite proxy handles /api
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    return '';
+  }
+  // Live deployment fallback to Render backend
+  return 'https://skillexchange-2-8uaj.onrender.com';
+};
+
+axios.defaults.baseURL = getBaseURL();
 axios.defaults.withCredentials = true;
+
+// Attach Bearer token from localStorage if present (for browsers blocking cross-site cookies)
+axios.interceptors.request.use((config) => {
+  const token = localStorage.getItem('skillmesh_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+}, (error) => {
+  return Promise.reject(error);
+});
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -42,6 +66,9 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await axios.post('/api/auth/login', { email, password });
       if (res.data.success) {
+        if (res.data.token) {
+          localStorage.setItem('skillmesh_token', res.data.token);
+        }
         setUser(res.data.user);
         showToast(`Welcome back, ${res.data.user.name}! 👋`, 'success');
         return { success: true, user: res.data.user };
@@ -63,6 +90,9 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await axios.post('/api/auth/register', userData);
       if (res.data.success) {
+        if (res.data.token) {
+          localStorage.setItem('skillmesh_token', res.data.token);
+        }
         setUser(res.data.user);
         showToast(`Account created! You have been credited with 3 free Escrow Credits ⚡`, 'success');
         return { success: true, user: res.data.user };
@@ -77,15 +107,17 @@ export const AuthProvider = ({ children }) => {
   // Logout handler
   const logout = async () => {
     try {
-      await axios.get('/api/auth/logout');
+      await axios.post('/api/auth/logout').catch(() => {});
+      localStorage.removeItem('skillmesh_token');
       setUser(null);
       showToast('Logged out successfully.', 'info');
     } catch (err) {
+      localStorage.removeItem('skillmesh_token');
       setUser(null);
     }
   };
 
-  // Refresh user data (e.g. after adding skill or swap)
+  // Refresh user profile
   const refreshUser = async () => {
     try {
       const res = await axios.get('/api/auth/me');
@@ -103,6 +135,7 @@ export const AuthProvider = ({ children }) => {
         user,
         loading,
         toast,
+        setToast,
         showToast,
         login,
         demoLogin,

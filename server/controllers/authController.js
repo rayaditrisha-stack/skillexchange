@@ -1,18 +1,20 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
-// Helper to send JWT in httpOnly cookie
+// Helper to send JWT in httpOnly cookie & JSON response
 const sendTokenResponse = (user, statusCode, res) => {
   const payload = { id: user._id, email: user.email, name: user.name };
   const token = jwt.sign(payload, process.env.JWT_SECRET || 'skillmesh_decentralized_campus_secret_key_2026_998877', {
     expiresIn: '7d'
   });
 
+  const isProduction = process.env.NODE_ENV === 'production' || process.env.RENDER || process.env.VERCEL;
+
   const options = {
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax'
+    secure: isProduction ? true : false,
+    sameSite: isProduction ? 'none' : 'lax'
   };
 
   const userObj = user.toObject ? user.toObject() : user;
@@ -23,7 +25,7 @@ const sendTokenResponse = (user, statusCode, res) => {
     .cookie('token', token, options)
     .json({
       success: true,
-      token, // Also returned for client convenience (e.g., localStorage fallback)
+      token,
       user: userObj
     });
 };
@@ -42,7 +44,6 @@ exports.register = async (req, res, next) => {
       });
     }
 
-    // Check if user exists
     const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {
       return res.status(400).json({
@@ -58,7 +59,7 @@ exports.register = async (req, res, next) => {
       campusName: campusName || 'Campus Hub',
       skillsOffered: skillsOffered || [],
       skillsNeeded: skillsNeeded || [],
-      escrowCredits: 3, // 3 free credits upon signup
+      escrowCredits: 3,
       reputationScore: 5.0
     });
 
@@ -105,12 +106,14 @@ exports.login = async (req, res, next) => {
 };
 
 // @desc    Logout user / clear cookie
-// @route   GET /api/auth/logout
+// @route   POST /api/auth/logout
 // @access  Private
 exports.logout = async (req, res) => {
   res.cookie('token', 'none', {
     expires: new Date(Date.now() + 10 * 1000),
-    httpOnly: true
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production' || process.env.RENDER || process.env.VERCEL ? true : false,
+    sameSite: process.env.NODE_ENV === 'production' || process.env.RENDER || process.env.VERCEL ? 'none' : 'lax'
   });
 
   res.status(200).json({
