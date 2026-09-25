@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import SkillBadge from '../components/SkillBadge';
 import SkeletonLoader from '../components/SkeletonLoader';
+import ConstellationField from '../components/ConstellationField';
 import {
   Zap,
   ShieldCheck,
@@ -101,16 +102,22 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 bg-grid-pattern pb-20">
+    <div className="min-h-screen bg-slate-950 text-slate-100 relative overflow-hidden pb-20">
       
-      {/* Dynamic Background Glow Spots */}
-      <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[800px] h-[350px] gradient-glow-violet blur-3xl pointer-events-none" />
-      <div className="absolute top-80 right-10 w-[500px] h-[300px] gradient-glow-emerald blur-3xl pointer-events-none" />
+      {/* 1. Constellation Field Canvas Background */}
+      <ConstellationField density={95} strokeWidth={1} maxDistance={135} speed={1.1} className="fixed inset-0 pointer-events-none z-0" />
+
+      {/* 2. Gradient Mask Overlay for High-Contrast Readable Content */}
+      <div className="fixed inset-0 bg-gradient-to-b from-slate-950/50 via-slate-950/75 to-slate-950 pointer-events-none z-0" />
+
+      {/* Dynamic Radial Ambient Glow Spots */}
+      <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[800px] h-[350px] gradient-glow-violet blur-3xl pointer-events-none z-0" />
+      <div className="absolute top-80 right-10 w-[500px] h-[300px] gradient-glow-emerald blur-3xl pointer-events-none z-0" />
 
       {/* Hero Section */}
-      <section className="relative pt-16 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center space-y-8">
+      <section className="relative z-10 pt-16 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center space-y-8">
         
-        {/* Badge */}
+        {/* Protocol Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 text-xs font-semibold shadow-lg shadow-emerald-950/40 backdrop-blur-md animate-fade-in">
           <Sparkles className="w-4 h-4 text-emerald-400" />
           <span>Decentralized Campus Skill Protocol</span>
@@ -169,7 +176,7 @@ export default function LandingPage() {
       </section>
 
       {/* Escrow Engine Breakdown Section */}
-      <section className="py-16 border-y border-slate-900 bg-slate-950/60 backdrop-blur-md">
+      <section className="relative z-10 py-16 border-y border-slate-900 bg-slate-950/60 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
           <div className="text-center space-y-3">
@@ -233,7 +240,7 @@ export default function LandingPage() {
       </section>
 
       {/* Live Skill Explorer Preview */}
-      <section id="explorer" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      <section id="explorer" className="relative z-10 py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
