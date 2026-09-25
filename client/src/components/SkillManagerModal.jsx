@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-import { Plus, Trash2, BookOpen, Zap, Sparkles, ExternalLink, X, ShieldCheck } from 'lucide-react';
+import { Plus, BookOpen, Zap, Sparkles, X } from 'lucide-react';
 import SkillBadge from './SkillBadge';
 
 export default function SkillManagerModal({ isOpen, onClose, onRefresh }) {
@@ -96,17 +96,17 @@ export default function SkillManagerModal({ isOpen, onClose, onRefresh }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
-      <div className="glass-card max-w-2xl w-full p-6 sm:p-8 rounded-3xl border border-slate-700 space-y-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+      <div className="bg-[#04060A] max-w-2xl w-full p-6 sm:p-8 rounded-3xl border border-white/10 space-y-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
         
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div className="flex items-center justify-between border-b border-white/10 pb-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/30 flex items-center justify-center text-violet-400">
+            <div className="w-10 h-10 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-300">
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-bold text-white text-lg">Manage Teachable Skills & Wishlist</h3>
+              <h3 className="font-semibold text-white text-lg font-sans">Manage Teachable Skills & Wishlist</h3>
               <p className="text-xs text-slate-400">Dynamic updates reflect live in the Match Engine.</p>
             </div>
           </div>
@@ -118,8 +118,8 @@ export default function SkillManagerModal({ isOpen, onClose, onRefresh }) {
         {/* SECTION 1: Skills You Can Teach */}
         <div className="space-y-4">
           <div className="space-y-1">
-            <h4 className="font-bold text-white text-sm flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-emerald-400" />
+            <h4 className="font-semibold text-white text-sm flex items-center gap-2">
+              <BookOpen className="w-4 h-4 text-amber-300" />
               What Can You Teach? (Skills Offered)
             </h4>
             <p className="text-xs text-slate-400">Add competencies and proof links to boost your peer match score.</p>
@@ -137,7 +137,7 @@ export default function SkillManagerModal({ isOpen, onClose, onRefresh }) {
           </div>
 
           {/* Add Skill Offered Form */}
-          <form onSubmit={handleAddOfferedSkill} className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-3">
+          <form onSubmit={handleAddOfferedSkill} className="p-4 rounded-2xl bg-[#020306] border border-white/10 space-y-3">
             <p className="text-xs font-semibold text-slate-300">Add New Skill to Offer:</p>
             
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -147,12 +147,12 @@ export default function SkillManagerModal({ isOpen, onClose, onRefresh }) {
                 placeholder="Skill name (e.g. Next.js, PyTorch)"
                 value={skillName}
                 onChange={(e) => setSkillName(e.target.value)}
-                className="sm:col-span-2 p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:border-violet-500"
+                className="sm:col-span-2 p-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-white focus:border-amber-400/50"
               />
               <select
                 value={level}
                 onChange={(e) => setLevel(e.target.value)}
-                className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 focus:border-violet-500"
+                className="p-2.5 rounded-xl bg-[#020306] border border-white/10 text-xs text-slate-300 focus:border-amber-400/50"
               >
                 <option value="Beginner">Beginner</option>
                 <option value="Intermediate">Intermediate</option>
@@ -165,43 +165,43 @@ export default function SkillManagerModal({ isOpen, onClose, onRefresh }) {
               placeholder="Proof / Portfolio URL (GitHub, Kaggle, Figma - optional)"
               value={proofUrl}
               onChange={(e) => setProofUrl(e.target.value)}
-              className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:border-violet-500"
+              className="w-full p-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-white focus:border-amber-400/50"
             />
 
             <button
               type="submit"
               disabled={addOfferedLoading}
-              className="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 font-semibold text-xs text-emerald-400 transition-colors flex items-center justify-center gap-1.5"
+              className="w-full py-2.5 rounded-xl bg-white text-slate-950 font-semibold text-xs hover:bg-slate-200 transition-colors flex items-center justify-center gap-1.5"
             >
-              <Plus className="w-4 h-4 text-emerald-400" />
+              <Plus className="w-4 h-4 text-slate-950" />
               {addOfferedLoading ? 'Publishing...' : 'Publish Skill to Campus Mesh'}
             </button>
           </form>
         </div>
 
         {/* SECTION 2: What Do You Want to Learn (Wishlist) */}
-        <div className="space-y-4 pt-4 border-t border-slate-800/80">
+        <div className="space-y-4 pt-4 border-t border-white/10">
           <div className="space-y-1">
-            <h4 className="font-bold text-white text-sm flex items-center gap-2">
-              <Zap className="w-4 h-4 text-violet-400" />
+            <h4 className="font-semibold text-white text-sm flex items-center gap-2">
+              <Zap className="w-4 h-4 text-amber-300" />
               What Do You Want to Learn? (Wishlist)
             </h4>
             <p className="text-xs text-slate-400">Match engine uses these tags to find direct and 3-way circular barter cycles.</p>
           </div>
 
           {/* Current Wishlist Tags */}
-          <div className="flex flex-wrap gap-2 min-h-[44px] p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+          <div className="flex flex-wrap gap-2 min-h-[44px] p-3 rounded-xl bg-[#020306] border border-white/10">
             {user.skillsNeeded && user.skillsNeeded.length > 0 ? (
               user.skillsNeeded.map((tag, idx) => (
                 <span
                   key={idx}
-                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-violet-500/10 border border-violet-500/30 text-violet-300 text-xs font-semibold"
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-400/10 border border-amber-400/30 text-amber-200 text-xs font-semibold"
                 >
                   {tag}
                   <button
                     disabled={updateNeededLoading}
                     onClick={() => handleRemoveNeededTag(tag)}
-                    className="hover:text-rose-400 transition-colors"
+                    className="hover:text-white transition-colors"
                   >
                     ✕
                   </button>
@@ -220,13 +220,13 @@ export default function SkillManagerModal({ isOpen, onClose, onRefresh }) {
               value={newNeededTag}
               onChange={(e) => setNewNeededTag(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddNeededTag())}
-              className="flex-1 p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:border-violet-500"
+              className="flex-1 p-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-white focus:border-amber-400/50"
             />
             <button
               type="button"
               disabled={updateNeededLoading}
               onClick={handleAddNeededTag}
-              className="px-4 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-semibold"
+              className="px-4 py-2.5 rounded-xl bg-white text-slate-950 hover:bg-slate-200 text-xs font-semibold"
             >
               Add Tag
             </button>
@@ -234,10 +234,10 @@ export default function SkillManagerModal({ isOpen, onClose, onRefresh }) {
         </div>
 
         {/* Modal Footer */}
-        <div className="flex justify-end pt-4 border-t border-slate-800">
+        <div className="flex justify-end pt-4 border-t border-white/10">
           <button
             onClick={onClose}
-            className="px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 transition-colors"
+            className="px-6 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-xs font-semibold text-slate-200 transition-colors"
           >
             Done
           </button>
