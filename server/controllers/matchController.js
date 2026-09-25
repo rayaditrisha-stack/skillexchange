@@ -1,41 +1,37 @@
-import User from '../models/User.js';
+const User = require('../models/User');
 
-/**
- * Direct 1:1 Matching Engine
- * Finds users where User A's offered skills match User B's needed skills
- * AND User B's offered skills match User A's needed skills.
- */
-export const getDirectMatches = async (req, res, next) => {
+// 1:1 Direct Matching
+exports.getDirectMatches = async (req, res, next) => {
   try {
-    const currentUser = await User.findById(req.user._id);
+    const currentUser = await User.findById(req.user.id);
     if (!currentUser) {
       return res.status(404).json({ success: false, message: 'User not found.' });
     }
 
-    const allPeers = await User.find({ _id: { $ne: currentUser._id } }).select('-password');
+    const allUsers = await User.find({ _id: { $ne: currentUser._id } }).select('-password');
 
-    const myOffered = currentUser.skillsOffered.map(s => s.skillName.toLowerCase());
-    const myNeeded = currentUser.skillsNeeded.map(s => s.toLowerCase());
+    const myOfferedNames = currentUser.skillsOffered.map(s => s.skillName.toLowerCase());
+    const myNeededNames = currentUser.skillsNeeded.map(s => s.toLowerCase());
 
     const directMatches = [];
 
-    allPeers.forEach(peer => {
-      const peerOffered = peer.skillsOffered.map(s => s.skillName.toLowerCase());
-      const peerNeeded = peer.skillsNeeded.map(s => s.toLowerCase());
+    allUsers.forEach(peer => {
+      const peerOfferedNames = peer.skillsOffered.map(s => s.skillName.toLowerCase());
+      const peerNeededNames = peer.skillsNeeded.map(s => s.toLowerCase());
 
-      const skillITeach = myOffered.find(s => peerNeeded.includes(s));
-      const skillIWant = peerOffered.find(s => myNeeded.includes(s));
+      const skillITeach = myOfferedNames.find(s => peerNeededNames.includes(s));
+      const skillIWant = peerOfferedNames.find(s => myNeededNames.includes(s));
 
       if (skillITeach || skillIWant) {
-        let matchScore = 50;
-        if (skillITeach && skillIWant) matchScore = 100; // Bilateral perfect match
-        else if (skillIWant) matchScore = 75;
+        let score = 50;
+        if (skillITeach && skillIWant) score = 100;
+        else if (skillIWant) score = 75;
 
         directMatches.push({
           peer,
           skillITeach: skillITeach ? currentUser.skillsOffered.find(s => s.skillName.toLowerCase() === skillITeach)?.skillName : null,
           skillIWant: skillIWant ? peer.skillsOffered.find(s => s.skillName.toLowerCase() === skillIWant)?.skillName : null,
-          matchScore,
+          matchScore: score,
           isBilateral: !!(skillITeach && skillIWant)
         });
       }
@@ -53,13 +49,10 @@ export const getDirectMatches = async (req, res, next) => {
   }
 };
 
-/**
- * 3-Way Graph Cycle Barter Engine (DFS with Depth = 3)
- * Detects 3-party circular trade chains (User A -> User B -> User C -> User A).
- */
-export const getTriangularSwaps = async (req, res, next) => {
+// 3-Way Graph Cycle Barter Engine (DFS Depth = 3)
+exports.getTriangularSwaps = async (req, res, next) => {
   try {
-    const currentUser = await User.findById(req.user._id);
+    const currentUser = await User.findById(req.user.id);
     if (!currentUser) {
       return res.status(404).json({ success: false, message: 'User not found.' });
     }
@@ -68,14 +61,10 @@ export const getTriangularSwaps = async (req, res, next) => {
     const userMap = new Map();
     allUsers.forEach(u => userMap.set(u._id.toString(), u));
 
-    // Build directed skill trade adjacency graph:
-    // Directed edge u -> v exists if user u offers a skill that user v needs.
     const adj = new Map();
-    const edgeSkills = new Map(); // key "u->v" => skillName
+    const edgeSkills = new Map();
 
-    allUsers.forEach(u => {
-      adj.set(u._id.toString(), []);
-    });
+    allUsers.forEach(u => adj.set(u._id.toString(), []));
 
     allUsers.forEach(userU => {
       const uId = userU._id.toString();
@@ -87,7 +76,6 @@ export const getTriangularSwaps = async (req, res, next) => {
 
         const vNeeded = (userV.skillsNeeded || []).map(s => s.toLowerCase());
 
-        // Find match
         const matchingSkill = uOffered.find(s => vNeeded.includes(s.skillName.toLowerCase()));
         if (matchingSkill) {
           adj.get(uId).push(vId);
@@ -100,10 +88,8 @@ export const getTriangularSwaps = async (req, res, next) => {
     const cycles = [];
     const visitedInPath = new Set();
 
-    // DFS graph cycle detection algorithm (Depth = 3)
     const dfs = (currentId, path, depth) => {
       if (depth === 3) {
-        // Check if edge returns to startId to complete 3-party cycle
         const neighbors = adj.get(currentId) || [];
         if (neighbors.includes(startId)) {
           const userBId = path[1];
@@ -118,31 +104,17 @@ export const getTriangularSwaps = async (req, res, next) => {
                 _id: userB._id,
                 name: userB.name,
                 avatar: userB.avatar,
-                campusName: userB.campusName,
-                reputationScore: userB.reputationScore
+                campusName: userB.campusName
               },
               userC: {
                 _id: userC._id,
                 name: userC.name,
                 avatar: userC.avatar,
-                campusName: userC.campusName,
-                reputationScore: userC.reputationScore
+                campusName: userC.campusName
               },
-              step1: {
-                from: 'You',
-                to: userB.name,
-                skill: edgeSkills.get(`${startId}->${userBId}`)
-              },
-              step2: {
-                from: userB.name,
-                to: userC.name,
-                skill: edgeSkills.get(`${userBId}->${userCId}`)
-              },
-              step3: {
-                from: userC.name,
-                to: 'You',
-                skill: edgeSkills.get(`${userCId}->${startId}`)
-              }
+              step1: { from: 'You', to: userB.name, skill: edgeSkills.get(`${startId}->${userBId}`) },
+              step2: { from: userB.name, to: userC.name, skill: edgeSkills.get(`${userBId}->${userCId}`) },
+              step3: { from: userC.name, to: 'You', skill: edgeSkills.get(`${userCId}->${startId}`) }
             });
           }
         }
@@ -173,17 +145,14 @@ export const getTriangularSwaps = async (req, res, next) => {
   }
 };
 
-/**
- * Get All Matches (Direct + Cycles)
- */
-export const getAllMatches = async (req, res, next) => {
+exports.getAllMatches = async (req, res, next) => {
   try {
     const directRes = await new Promise((resolve, reject) => {
-      getDirectMatches(req, { status: () => ({ json: resolve }) }, reject);
+      exports.getDirectMatches(req, { status: () => ({ json: resolve }) }, reject);
     });
 
     const cycleRes = await new Promise((resolve, reject) => {
-      getTriangularSwaps(req, { status: () => ({ json: resolve }) }, reject);
+      exports.getTriangularSwaps(req, { status: () => ({ json: resolve }) }, reject);
     });
 
     res.status(200).json({

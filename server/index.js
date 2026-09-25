@@ -53,6 +53,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/swaps', require('./routes/swapRoutes'));
+app.use('/api/matches', require('./routes/matchRoutes'));
 
 // Centralized error handler middleware
 app.use(errorHandler);

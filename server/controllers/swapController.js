@@ -1,13 +1,10 @@
 const SkillSwapSession = require('../models/SkillSwapSession');
 const User = require('../models/User');
 
-// @desc    Initiate a new Skill Swap session
-// @route   POST /api/swaps
-// @access  Private
+// Initiate swap session & lock 1 credit in escrow ($inc: { escrowCredits: -1 })
 exports.createSwapSession = async (req, res, next) => {
   try {
     const { peerId, skillName, role, sessionTime, notes } = req.body;
-    // role: 'learner' (requesting peer to teach me) or 'mentor' (offering to teach peer)
 
     if (!peerId || !skillName) {
       return res.status(400).json({
@@ -30,7 +27,6 @@ exports.createSwapSession = async (req, res, next) => {
       learnerId = req.user.id;
     }
 
-    // Check learner escrow credits
     const learner = await User.findById(learnerId);
     if (learner.escrowCredits < 1) {
       return res.status(400).json({
@@ -39,25 +35,29 @@ exports.createSwapSession = async (req, res, next) => {
       });
     }
 
+    // Atomic Escrow Lock
+    await User.findByIdAndUpdate(learnerId, {
+      $inc: { escrowCredits: -1 }
+    });
+
     const session = await SkillSwapSession.create({
       mentorId,
       learnerId,
       skillName,
-      sessionTime: sessionTime ? new Date(sessionTime) : new Date(Date.now() + 24 * 60 * 60 * 1000), // Default tomorrow
+      sessionTime: sessionTime ? new Date(sessionTime) : new Date(Date.now() + 24 * 60 * 60 * 1000),
       notes: notes || `Campus exchange session for ${skillName}`,
       status: 'pending',
       creditsEscrowed: 1,
       dualConfirmation: { mentorSigned: false, learnerSigned: false }
     });
 
-    // Populate user info for response
     const populated = await SkillSwapSession.findById(session._id)
-      .populate('mentorId', 'name email avatar campusName reputationScore')
-      .populate('learnerId', 'name email avatar campusName reputationScore');
+      .populate('mentorId', 'name email avatar campusName reputationScore escrowCredits')
+      .populate('learnerId', 'name email avatar campusName reputationScore escrowCredits');
 
     res.status(201).json({
       success: true,
-      message: 'Skill swap session requested! 1 Escrow Credit held in escrow.',
+      message: 'Skill swap session requested! 1 Escrow Credit locked in protocol hold.',
       session: populated
     });
   } catch (err) {
@@ -65,9 +65,6 @@ exports.createSwapSession = async (req, res, next) => {
   }
 };
 
-// @desc    Get user's swap sessions (as mentor or learner)
-// @route   GET /api/swaps
-// @access  Private
 exports.getMySwaps = async (req, res, next) => {
   try {
     const userId = req.user.id;
@@ -75,8 +72,8 @@ exports.getMySwaps = async (req, res, next) => {
     const sessions = await SkillSwapSession.find({
       $or: [{ mentorId: userId }, { learnerId: userId }]
     })
-      .populate('mentorId', 'name email avatar campusName reputationScore')
-      .populate('learnerId', 'name email avatar campusName reputationScore')
+      .populate('mentorId', 'name email avatar campusName reputationScore escrowCredits')
+      .populate('learnerId', 'name email avatar campusName reputationScore escrowCredits')
       .sort({ createdAt: -1 });
 
     res.status(200).json({
@@ -89,9 +86,7 @@ exports.getMySwaps = async (req, res, next) => {
   }
 };
 
-// @desc    Dual Confirmation Signature & Escrow Release
-// @route   PUT /api/swaps/:id/confirm
-// @access  Private
+// Dual Confirmation Signature & Escrow Release ($inc: { escrowCredits: 1 })
 exports.signSwapConfirmation = async (req, res, next) => {
   try {
     const sessionId = req.params.id;
@@ -113,7 +108,6 @@ exports.signSwapConfirmation = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Session is already completed and credits released!' });
     }
 
-    // Update signature
     if (isMentor) {
       session.dualConfirmation.mentorSigned = true;
     }
@@ -121,39 +115,35 @@ exports.signSwapConfirmation = async (req, res, next) => {
       session.dualConfirmation.learnerSigned = true;
     }
 
-    // Set to active if at least one signed
     if (session.status === 'pending') {
       session.status = 'active';
     }
 
     let escrowReleased = false;
 
-    // DUAL SIGNATURE CHECK: If BOTH mentor & learner signed, complete session and transfer credits!
     if (session.dualConfirmation.mentorSigned && session.dualConfirmation.learnerSigned) {
       session.status = 'completed';
       escrowReleased = true;
 
-      // Credit Transfer from Learner to Mentor
-      const learner = await User.findById(session.learnerId);
+      // Atomic Credit Release to Mentor
+      await User.findByIdAndUpdate(session.mentorId, {
+        $inc: { escrowCredits: 1, completedSwapsCount: 1 }
+      });
+
+      await User.findByIdAndUpdate(session.learnerId, {
+        $inc: { completedSwapsCount: 1 }
+      });
+
       const mentor = await User.findById(session.mentorId);
+      const learner = await User.findById(session.learnerId);
 
-      if (learner && mentor) {
-        if (learner.escrowCredits >= session.creditsEscrowed) {
-          learner.escrowCredits -= session.creditsEscrowed;
-        } else {
-          learner.escrowCredits = 0;
-        }
-        mentor.escrowCredits += session.creditsEscrowed;
-
-        // Reputation score boost
-        learner.reputationScore = Math.min(5.0, Number((learner.reputationScore + 0.05).toFixed(1)));
+      if (mentor) {
         mentor.reputationScore = Math.min(5.0, Number((mentor.reputationScore + 0.1).toFixed(1)));
-
-        learner.completedSwapsCount += 1;
-        mentor.completedSwapsCount += 1;
-
-        await learner.save();
         await mentor.save();
+      }
+      if (learner) {
+        learner.reputationScore = Math.min(5.0, Number((learner.reputationScore + 0.05).toFixed(1)));
+        await learner.save();
       }
     }
 

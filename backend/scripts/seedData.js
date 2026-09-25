@@ -87,11 +87,11 @@ export const seedDatabase = async () => {
   try {
     await connectDB();
 
-    console.log('🧹 Purging existing users and sessions...');
+    console.log('🧹 Purging test users and sessions...');
     await User.deleteMany({});
     await SwapSession.deleteMany({});
 
-    console.log('🌱 Seeding 5 diverse campus users...');
+    console.log('🌱 Seeding 5 diverse campus profiles engineered for 1:1 and 3-way cycles...');
     const createdUsers = await User.create(seedUsers);
     console.log(`✅ Seeded ${createdUsers.length} users successfully!`);
 
@@ -100,7 +100,7 @@ export const seedDatabase = async () => {
     const marcus = createdUsers.find(u => u.email === 'marcus.v@iit.ac.in');
     const elena = createdUsers.find(u => u.email === 'elena.r@berkeley.edu');
 
-    console.log('🤝 Creating initial demo swap sessions...');
+    console.log('🤝 Seeding initial active and completed sessions...');
     await SwapSession.create([
       {
         mentorId: alex._id,
@@ -134,7 +134,7 @@ export const seedDatabase = async () => {
       }
     ]);
 
-    console.log('✨ Seed completed! All campus users & demo swap sessions created successfully.');
+    console.log('✨ Seed completed! 1:1 matches and 3-party circular barter cycles ($A -> B -> C -> A) are live.');
     return true;
   } catch (err) {
     console.error('❌ Seeding Error:', err);

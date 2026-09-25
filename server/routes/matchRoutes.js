@@ -1,8 +1,7 @@
-import express from 'express';
-import { getDirectMatches, getTriangularSwaps, getAllMatches } from '../controllers/matchController.js';
-import { protect } from '../middleware/authMiddleware.js';
-
+const express = require('express');
 const router = express.Router();
+const { getDirectMatches, getTriangularSwaps, getAllMatches } = require('../controllers/matchController');
+const { protect } = require('../middleware/auth');
 
 router.use(protect);
 
@@ -11,4 +10,4 @@ router.get('/cycles', getTriangularSwaps);
 router.get('/triangular', getTriangularSwaps);
 router.get('/all', getAllMatches);
 
-export default router;
+module.exports = router;

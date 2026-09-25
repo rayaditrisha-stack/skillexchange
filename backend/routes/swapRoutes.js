@@ -9,5 +9,6 @@ router.use(protect);
 router.post('/', createSwapSession);
 router.get('/', getMySwapSessions);
 router.put('/:id/confirm', signSwapConfirmation);
+router.patch('/:id/sign', signSwapConfirmation);
 
 export default router;
