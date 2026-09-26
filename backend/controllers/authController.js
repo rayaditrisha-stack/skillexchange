@@ -16,9 +16,13 @@ export const registerUser = async (req, res, next) => {
     if (userExists) {
       return res.status(400).json({
         success: false,
-        message: 'An account with this campus email already exists.'
+        message: 'An account with this email address already exists.'
       });
     }
+
+    const formattedSkillsNeeded = (skillsNeeded || []).map((s) =>
+      typeof s === 'string' ? s : s.skillName || String(s)
+    );
 
     const user = await User.create({
       name,
@@ -26,7 +30,7 @@ export const registerUser = async (req, res, next) => {
       password,
       campusName: campusName || 'Campus Node',
       skillsOffered: skillsOffered || [],
-      skillsNeeded: skillsNeeded || [],
+      skillsNeeded: formattedSkillsNeeded,
       escrowCredits: 3,
       reputationScore: 5.0
     });
@@ -61,7 +65,7 @@ export const loginUser = async (req, res, next) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid campus email or password.'
+        message: 'Invalid email or password.'
       });
     }
 
@@ -69,7 +73,7 @@ export const loginUser = async (req, res, next) => {
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid campus email or password.'
+        message: 'Invalid email or password.'
       });
     }
 

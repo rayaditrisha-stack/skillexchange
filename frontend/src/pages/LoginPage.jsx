@@ -32,7 +32,7 @@ export default function LoginPage() {
     setError('');
 
     if (!email.trim() || !password) {
-      setError('Please provide both your campus email and password.');
+      setError('Please provide both your email address and password.');
       return;
     }
 
@@ -52,28 +52,28 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#04060A] text-slate-100 font-sans selection:bg-amber-400/20 selection:text-amber-200 flex overflow-hidden">
+    <div className="relative min-h-screen transition-colors duration-200 dark:bg-[#04060a] bg-[#f8fafc] text-slate-900 dark:text-slate-100 font-sans selection:bg-amber-400/20 selection:text-amber-500 dark:selection:text-amber-200 flex overflow-hidden">
       {/* Background Constellation Effect */}
       <ConstellationField />
-      <div className="absolute inset-0 bg-gradient-to-r from-[#04060A] via-[#04060A]/90 to-[#04060A] pointer-events-none z-0" />
+      <div className="absolute inset-0 dark:bg-gradient-to-r dark:from-[#04060A] dark:via-[#04060A]/90 dark:to-[#04060A] bg-gradient-to-r from-[#f8fafc] via-[#f8fafc]/90 to-[#f8fafc] pointer-events-none z-0 transition-colors duration-200" />
 
       {/* Main Split Layout Container */}
       <div className="relative z-10 flex w-full min-h-screen">
         
-        {/* LEFT PANEL: Atmospheric Showcase (Hidden on mobile, 45% width on desktop) */}
-        <div className="hidden lg:flex lg:w-[45%] bg-white/[0.01] backdrop-blur-xl border-r border-white/[0.08] p-12 flex-col justify-between relative overflow-hidden">
+        {/* LEFT PANEL: Atmospheric Showcase */}
+        <div className="hidden lg:flex lg:w-[45%] bg-slate-100/50 dark:bg-white/[0.01] backdrop-blur-xl border-r border-slate-200 dark:border-white/[0.08] p-12 flex-col justify-between relative overflow-hidden transition-colors duration-200">
           {/* Ambient Warm Glow Orbs */}
-          <div className="absolute top-1/4 left-10 w-80 h-80 bg-amber-400/10 rounded-full blur-[100px] pointer-events-none" />
+          <div className="absolute top-1/4 left-10 w-80 h-80 bg-amber-500/10 dark:bg-amber-400/10 rounded-full blur-[100px] pointer-events-none" />
 
           {/* Top Brand Header */}
           <div className="relative z-10">
             <Link to="/" className="inline-flex items-center gap-3 group">
-              <div className="bg-amber-400/10 border border-amber-400/20 text-amber-200 p-2.5 rounded-xl backdrop-blur-md flex items-center justify-center group-hover:bg-amber-400/20 transition-colors">
-                <Sparkles className="w-5 h-5 text-amber-200 fill-amber-200/20" />
+              <div className="bg-amber-500/10 dark:bg-amber-400/10 border border-amber-500/20 dark:border-amber-400/20 text-amber-600 dark:text-amber-200 p-2.5 rounded-xl backdrop-blur-md flex items-center justify-center group-hover:bg-amber-500/20 transition-colors">
+                <Sparkles className="w-5 h-5 text-amber-600 dark:text-amber-200 fill-amber-500/20" />
               </div>
               <div className="flex flex-col">
-                <span className="font-semibold text-xl tracking-tight text-white font-sans">SkillMesh</span>
-                <span className="text-[10px] text-slate-400 font-mono tracking-wider uppercase">Campus Barter Protocol</span>
+                <span className="font-semibold text-xl tracking-tight text-slate-900 dark:text-white font-sans">SkillMesh</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono tracking-wider uppercase">Campus Barter Protocol</span>
               </div>
             </Link>
           </div>
@@ -81,24 +81,24 @@ export default function LoginPage() {
           {/* Middle Showcase: Testimonial & Live Metric */}
           <div className="relative z-10 space-y-8 my-auto max-w-lg">
             {/* Live Metric Badge */}
-            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-amber-400/10 border border-amber-400/20 text-amber-200 text-xs font-mono shadow-[0_0_20px_rgba(212,175,55,0.12)]">
-              <TrendingUp className="w-4 h-4 text-amber-300" />
+            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-amber-500/10 dark:bg-amber-400/10 border border-amber-500/20 dark:border-amber-400/20 text-amber-800 dark:text-amber-200 text-xs font-mono shadow-sm">
+              <TrendingUp className="w-4 h-4 text-amber-600 dark:text-amber-300" />
               <span>Over 1,200 peer hours exchanged this semester</span>
             </div>
 
             {/* Testimonial Card */}
-            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.08] shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)] relative backdrop-blur-md space-y-4">
-              <Quote className="w-8 h-8 text-amber-400/30" />
-              <p className="text-sm text-slate-300 leading-relaxed font-normal italic">
+            <div className="p-6 rounded-2xl bg-white dark:bg-white/[0.02] border border-slate-200 dark:border-white/[0.08] shadow-md dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)] relative backdrop-blur-md space-y-4">
+              <Quote className="w-8 h-8 text-amber-500/30 dark:text-amber-400/30" />
+              <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-normal italic">
                 "I taught React to two sophomores in exchange for 4 hours of machine learning mentoring. SkillMesh allowed me to land my AI internship without spending a single dollar."
               </p>
-              <div className="flex items-center gap-3 pt-2 border-t border-white/5">
-                <div className="w-9 h-9 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-200 font-bold text-xs flex items-center justify-center font-mono">
+              <div className="flex items-center gap-3 pt-2 border-t border-slate-200 dark:border-white/5">
+                <div className="w-9 h-9 rounded-full bg-amber-500/10 dark:bg-amber-400/10 border border-amber-500/30 dark:border-amber-400/30 text-amber-700 dark:text-amber-200 font-bold text-xs flex items-center justify-center font-mono">
                   AR
                 </div>
                 <div>
-                  <div className="text-xs font-semibold text-white">Alex Rivera</div>
-                  <div className="text-[10px] text-slate-400 font-mono">Senior CS Major • Verified Peer Mentor</div>
+                  <div className="text-xs font-semibold text-slate-900 dark:text-white">Alex Rivera</div>
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Senior CS Major • Verified Peer Mentor</div>
                 </div>
               </div>
             </div>
@@ -107,34 +107,34 @@ export default function LoginPage() {
           {/* Bottom Footer info */}
           <div className="relative z-10 flex items-center justify-between text-xs text-slate-500 font-mono">
             <span>© 2026 SkillMesh Protocol</span>
-            <span className="flex items-center gap-1.5 text-amber-200/90">
-              <ShieldCheck className="w-4 h-4 text-amber-300" /> Dual Escrow Enabled
+            <span className="flex items-center gap-1.5 text-amber-700 dark:text-amber-200/90 font-medium">
+              <ShieldCheck className="w-4 h-4 text-amber-600 dark:text-amber-300" /> Dual Escrow Enabled
             </span>
           </div>
         </div>
 
         {/* RIGHT PANEL: Minimalist Focused Login Form */}
         <div className="w-full lg:w-[55%] flex items-center justify-center p-6 sm:p-12">
-          <div className="w-full max-w-md space-y-8 bg-white/[0.02] backdrop-blur-xl border border-white/[0.08] shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)] p-8 sm:p-10 rounded-3xl shadow-2xl shadow-black/90">
+          <div className="w-full max-w-md space-y-8 dark:bg-white/[0.03] bg-white border dark:border-white/[0.08] border-slate-200 shadow-xl rounded-2xl p-8 sm:p-10 backdrop-blur-xl transition-colors duration-200">
             
             {/* Form Title Header */}
             <div>
               <div className="flex items-center gap-2 lg:hidden mb-6">
-                <div className="bg-amber-400/10 border border-amber-400/20 text-amber-200 p-2 rounded-xl">
-                  <Sparkles className="w-4 h-4 text-amber-200 fill-amber-200/20" />
+                <div className="bg-amber-500/10 dark:bg-amber-400/10 border border-amber-500/20 dark:border-amber-400/20 text-amber-600 dark:text-amber-200 p-2 rounded-xl">
+                  <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-200 fill-amber-500/20" />
                 </div>
-                <span className="font-semibold text-lg text-white font-sans">SkillMesh</span>
+                <span className="font-semibold text-lg text-slate-900 dark:text-white font-sans">SkillMesh</span>
               </div>
-              <h1 className="text-3xl font-semibold text-white tracking-tight mb-2 font-sans">Welcome Back</h1>
-              <p className="text-xs text-slate-400">
+              <h1 className="text-3xl font-semibold text-slate-900 dark:text-white tracking-tight mb-2 font-sans">Welcome Back</h1>
+              <p className="text-xs text-slate-600 dark:text-slate-400">
                 Sign in with your campus credentials to access your peer barter dashboard.
               </p>
             </div>
 
             {/* Inline Error Banner */}
             {error && (
-              <div className="p-4 rounded-xl bg-amber-400/10 border border-amber-400/30 text-amber-200 text-xs flex items-start gap-2.5">
-                <X className="w-4 h-4 shrink-0 mt-0.5 text-amber-300" />
+              <div className="p-4 rounded-xl bg-amber-500/10 dark:bg-amber-400/10 border border-amber-500/30 dark:border-amber-400/30 text-amber-800 dark:text-amber-200 text-xs flex items-start gap-2.5">
+                <X className="w-4 h-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-300" />
                 <span>{error}</span>
               </div>
             )}
@@ -142,57 +142,57 @@ export default function LoginPage() {
             {/* Login Form */}
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2 font-mono">
-                  Campus Email
+                <label className="block text-xs uppercase tracking-wider font-semibold text-slate-700 dark:text-slate-300 mb-2 font-mono">
+                  Email Address
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-4 top-3.5 w-4 h-4 text-slate-500" />
+                  <Mail className="absolute left-4 top-3.5 w-4 h-4 text-slate-400 dark:text-slate-500" />
                   <input
                     type="email"
                     required
-                    placeholder="student@university.edu"
+                    placeholder="alex@gmail.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3 bg-white/[0.03] border border-white/10 focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/20 text-slate-100 rounded-xl placeholder-slate-500 transition-colors text-sm"
+                    className="w-full pl-11 pr-4 py-3 dark:bg-white/5 bg-slate-50 border dark:border-white/10 border-slate-300 text-slate-900 dark:text-white placeholder-slate-400 focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/20 rounded-xl transition-colors text-sm"
                   />
                 </div>
               </div>
 
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 font-mono">
+                  <label className="block text-xs uppercase tracking-wider font-semibold text-slate-700 dark:text-slate-300 font-mono">
                     Password
                   </label>
                 </div>
                 <div className="relative">
-                  <Lock className="absolute left-4 top-3.5 w-4 h-4 text-slate-500" />
+                  <Lock className="absolute left-4 top-3.5 w-4 h-4 text-slate-400 dark:text-slate-500" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
                     placeholder="••••••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-11 pr-11 py-3 bg-white/[0.03] border border-white/10 focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/20 text-slate-100 rounded-xl placeholder-slate-500 transition-colors text-sm"
+                    className="w-full pl-11 pr-11 py-3 dark:bg-white/5 bg-slate-50 border dark:border-white/10 border-slate-300 text-slate-900 dark:text-white placeholder-slate-400 focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/20 rounded-xl transition-colors text-sm"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-3.5 text-slate-500 hover:text-slate-300 transition-colors"
+                    className="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
 
-              {/* Solid Platinum White CTA Button */}
+              {/* Primary Action Button */}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 px-6 rounded-xl bg-white hover:bg-slate-200 text-slate-950 font-semibold text-sm shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50 mt-2"
+                className="w-full py-3.5 px-6 rounded-xl dark:bg-white dark:text-black bg-slate-900 text-white font-medium hover:opacity-90 text-sm shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50 mt-2"
               >
                 {loading ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin text-slate-950" />
+                    <Loader2 className="w-4 h-4 animate-spin" />
                     <span>Signing in...</span>
                   </>
                 ) : (
@@ -205,9 +205,9 @@ export default function LoginPage() {
             </form>
 
             {/* Subtext link */}
-            <div className="pt-4 border-t border-white/10 text-center text-xs text-slate-400">
+            <div className="pt-4 border-t border-slate-200 dark:border-white/10 text-center text-xs text-slate-600 dark:text-slate-400">
               Don't have an account?{' '}
-              <Link to="/register" className="text-amber-300 font-semibold hover:underline">
+              <Link to="/register" className="text-amber-600 dark:text-amber-300 font-semibold hover:underline">
                 Create one
               </Link>
             </div>

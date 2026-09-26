@@ -121,24 +121,27 @@ export default function Dashboard() {
   // Initiate Swap Handler
   const handleInitiateSwapSubmit = async (e) => {
     e.preventDefault();
-    if (!requestSkill) {
-      showToast('Please select a skill to swap.', 'error');
+    if (!requestSkill || !requestSkill.trim()) {
+      showToast('Please select or type a skill to learn.', 'error');
       return;
     }
 
     try {
       setSwapRequestLoading(true);
+      const targetSkill = requestSkill.trim();
       const res = await axios.post('/api/swaps', {
         peerId: swapModalPeer._id,
-        skillName: requestSkill,
+        skillName: targetSkill,
+        skillRequested: targetSkill,
         role: 'learner',
-        notes: requestNotes || `Hi ${swapModalPeer.name}, let's swap skills!`
+        notes: requestNotes || `Hi ${swapModalPeer.name || 'Peer'}, let's swap skills!`
       });
 
-      if (res.data.success) {
-        showToast(`Swap request sent to ${swapModalPeer.name}! 1 Escrow credit held.`, 'success');
+      if (res.data && res.data.success) {
+        showToast(`Swap request sent to ${swapModalPeer.name || 'Peer'}! 1 Escrow credit held.`, 'success');
         setSwapModalPeer(null);
         setRequestNotes('');
+        setRequestSkill('');
         await refreshUser();
         fetchData();
         setActiveTab('sessions');
@@ -169,8 +172,8 @@ export default function Dashboard() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#04060A] flex items-center justify-center text-slate-400">
-        <RefreshCw className="w-6 h-6 animate-spin text-amber-300" />
+      <div className="min-h-screen dark:bg-[#04060A] bg-[#f8fafc] flex items-center justify-center text-slate-400">
+        <RefreshCw className="w-6 h-6 animate-spin text-amber-500 dark:text-amber-300" />
       </div>
     );
   }
@@ -181,7 +184,7 @@ export default function Dashboard() {
   ).length;
 
   return (
-    <div className="relative min-h-screen bg-[#04060A] text-slate-100 px-6 py-8 font-sans selection:bg-amber-400/20 selection:text-amber-200">
+    <div className="relative min-h-screen transition-colors duration-200 dark:bg-[#04060A] bg-[#f8fafc] text-slate-900 dark:text-slate-100 p-6 md:p-10 font-sans selection:bg-amber-400/20 selection:text-amber-500 dark:selection:text-amber-200 relative overflow-hidden">
       {/* Background Canvas */}
       <ConstellationField />
 
@@ -189,21 +192,21 @@ export default function Dashboard() {
       <div className="relative z-10 max-w-6xl mx-auto space-y-8">
         
         {/* HEADER HUD CARD */}
-        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] backdrop-blur-xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)]">
+        <div className="dark:bg-white/[0.03] bg-white border dark:border-white/[0.08] border-slate-200 shadow-sm rounded-2xl p-6 backdrop-blur-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors duration-200">
           
           {/* User Identity */}
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-slate-900 border border-amber-400/20 text-amber-200 font-bold text-base flex items-center justify-center font-mono shadow-inner">
+            <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-900 border border-amber-500/30 dark:border-amber-400/20 text-amber-700 dark:text-amber-200 font-bold text-base flex items-center justify-center font-mono shadow-inner">
               {user.name ? user.name.slice(0, 2).toUpperCase() : 'U'}
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-semibold text-white tracking-tight">{user.name}</h1>
-                <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-amber-400/10 border border-amber-400/20 text-amber-200">
+                <h1 className="text-xl font-bold dark:text-white text-slate-900 tracking-tight">{user.name}</h1>
+                <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-amber-500/10 dark:bg-amber-400/10 border border-amber-500/20 dark:border-amber-400/20 text-amber-800 dark:text-amber-200 font-semibold">
                   ★ {user.reputationScore ? user.reputationScore.toFixed(1) : '5.0'} Rating
                 </span>
               </div>
-              <p className="text-xs text-slate-400 font-mono mt-0.5">
+              <p className="text-xs dark:text-slate-400 text-slate-500 font-mono mt-0.5">
                 {user.email} • {user.campusName || 'Main Campus Node'}
               </p>
             </div>
@@ -211,22 +214,22 @@ export default function Dashboard() {
 
           {/* Balances & Action */}
           <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-            {/* Champagne Gold Glass Escrow Pill */}
+            {/* Credit & Escrow Badges */}
             <div className="flex items-center gap-2">
-              <span className="border border-amber-400/30 bg-amber-400/10 text-amber-300 px-3 py-1 rounded-full text-xs font-medium inline-flex items-center gap-1.5 shadow-[0_0_12px_rgba(251,191,36,0.1)]">
-                <Zap className="w-3.5 h-3.5 fill-amber-300 text-amber-300" />
+              <span className="border border-amber-500/30 dark:border-amber-400/30 bg-amber-500/10 dark:bg-amber-400/10 text-amber-800 dark:text-amber-300 px-3 py-1 rounded-full text-xs font-semibold inline-flex items-center gap-1.5 shadow-sm">
+                <Zap className="w-3.5 h-3.5 fill-amber-500 text-amber-500 dark:fill-amber-300 dark:text-amber-300" />
                 Available: {availableCredits}
               </span>
-              <span className="border border-white/10 bg-white/5 text-slate-400 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1.5">
-                <Lock className="w-3.5 h-3.5" />
+              <span className="dark:bg-white/5 bg-slate-100 border dark:border-white/10 border-slate-200 text-slate-700 dark:text-slate-300 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1.5">
+                <Lock className="w-3.5 h-3.5 text-slate-500" />
                 Escrow Held: {lockedCredits}
               </span>
             </div>
 
-            {/* Quick Action Button - Solid Platinum White */}
+            {/* Quick Action Button */}
             <button
               onClick={() => setIsSkillModalOpen(true)}
-              className="bg-white text-slate-950 hover:bg-slate-200 px-4 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 shadow-sm"
+              className="dark:bg-white dark:text-black bg-slate-900 text-white font-medium hover:opacity-90 px-4 py-2 rounded-lg text-xs transition-all flex items-center gap-1.5 shadow-sm"
             >
               <Plus className="w-3.5 h-3.5 stroke-[3]" />
               <span>Offer New Skill</span>
@@ -235,14 +238,14 @@ export default function Dashboard() {
         </div>
 
         {/* SEGMENTED NAVIGATION TAB SWITCHER */}
-        <div className="flex items-center justify-between border-b border-white/[0.08] pb-4">
-          <div className="bg-[#020306] p-1 rounded-xl border border-white/10 flex gap-1 inline-flex">
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/[0.08] pb-4">
+          <div className="dark:bg-white/[0.03] bg-slate-200/60 p-1 rounded-xl border dark:border-white/10 border-slate-300 transition-colors duration-200 flex gap-1 inline-flex">
             <button
               onClick={() => setActiveTab('direct')}
-              className={`px-4 py-2 rounded-lg text-xs font-medium transition-colors ${
+              className={`px-4 py-2 rounded-lg text-xs transition-colors ${
                 activeTab === 'direct'
-                  ? 'bg-white text-slate-950 font-semibold shadow-sm'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'dark:bg-white dark:text-black bg-slate-900 text-white font-medium shadow-sm font-semibold'
+                  : 'dark:text-slate-400 text-slate-600 hover:text-slate-900 dark:hover:text-white font-medium'
               }`}
             >
               Direct 1:1 Matches ({matches.directMatches.length})
@@ -250,10 +253,10 @@ export default function Dashboard() {
 
             <button
               onClick={() => setActiveTab('triangular')}
-              className={`px-4 py-2 rounded-lg text-xs font-medium transition-colors ${
+              className={`px-4 py-2 rounded-lg text-xs transition-colors ${
                 activeTab === 'triangular'
-                  ? 'bg-white text-slate-950 font-semibold shadow-sm'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'dark:bg-white dark:text-black bg-slate-900 text-white font-medium shadow-sm font-semibold'
+                  : 'dark:text-slate-400 text-slate-600 hover:text-slate-900 dark:hover:text-white font-medium'
               }`}
             >
               Triangular Barter Chains ({matches.triangularSwaps.length})
@@ -261,10 +264,10 @@ export default function Dashboard() {
 
             <button
               onClick={() => setActiveTab('sessions')}
-              className={`px-4 py-2 rounded-lg text-xs font-medium transition-colors ${
+              className={`px-4 py-2 rounded-lg text-xs transition-colors ${
                 activeTab === 'sessions'
-                  ? 'bg-white text-slate-950 font-semibold shadow-sm'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'dark:bg-white dark:text-black bg-slate-900 text-white font-medium shadow-sm font-semibold'
+                  : 'dark:text-slate-400 text-slate-600 hover:text-slate-900 dark:hover:text-white font-medium'
               }`}
             >
               Active Sessions & Escrow ({sessions.length})
@@ -273,7 +276,7 @@ export default function Dashboard() {
 
           <button
             onClick={fetchData}
-            className="p-2 rounded-lg bg-white/5 border border-white/10 text-slate-400 hover:text-white transition-colors"
+            className="p-2 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
             title="Refresh Data"
           >
             <RefreshCw className={`w-4 h-4 ${loadingData ? 'animate-spin' : ''}`} />
@@ -286,67 +289,67 @@ export default function Dashboard() {
             {loadingData ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-44 rounded-xl bg-white/[0.02] border border-white/[0.08] animate-pulse" />
+                  <div key={i} className="h-44 rounded-xl dark:bg-white/[0.02] bg-white border border-slate-200 dark:border-white/[0.08] animate-pulse" />
                 ))}
               </div>
             ) : matches.directMatches.length === 0 ? (
-              <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] backdrop-blur-xl p-12 text-center space-y-3 shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)]">
-                <Users className="w-10 h-10 text-slate-600 mx-auto" />
-                <h3 className="text-base font-semibold text-white">No Direct Matches Found</h3>
-                <p className="text-xs text-slate-400 max-w-sm mx-auto">
+              <div className="dark:bg-white/[0.02] bg-white border dark:border-white/[0.08] border-slate-200 shadow-sm rounded-2xl p-12 text-center space-y-3">
+                <Users className="w-10 h-10 text-slate-400 dark:text-slate-600 mx-auto" />
+                <h3 className="text-base font-semibold dark:text-white text-slate-900">No Direct Matches Found</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
                   Add more skills you teach or learn using "+ Offer New Skill" to expand your match network.
                 </p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {matches.directMatches.map((peer, idx) => (
+                {matches.directMatches.map((match, idx) => (
                   <div
-                    key={peer._id || idx}
-                    className="rounded-xl border border-white/[0.08] bg-white/[0.02] hover:border-amber-400/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)] transition-all p-5 flex flex-col justify-between space-y-4"
+                    key={match._id || idx}
+                    className="dark:bg-white/[0.02] bg-white border dark:border-white/[0.08] border-slate-200 shadow-sm rounded-2xl p-6 hover:border-amber-500/30 transition-all flex flex-col justify-between space-y-4"
                   >
                     <div>
                       {/* Peer Header */}
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-9 h-9 rounded-lg bg-slate-900 border border-amber-400/20 text-amber-200 font-bold text-xs flex items-center justify-center font-mono">
-                            {peer.name ? peer.name.slice(0, 2).toUpperCase() : 'PE'}
+                          <div className="w-9 h-9 rounded-lg bg-slate-100 dark:bg-slate-900 border border-amber-500/30 dark:border-amber-400/20 text-amber-700 dark:text-amber-200 font-bold text-xs flex items-center justify-center font-mono">
+                            {match.name ? match.name.slice(0, 2).toUpperCase() : 'PE'}
                           </div>
                           <div>
-                            <div className="font-semibold text-white text-sm">{peer.name}</div>
-                            <div className="text-[10px] text-slate-400 font-mono">★ {peer.reputationScore || '5.0'} Rating</div>
+                            <div className="font-semibold text-slate-900 dark:text-white text-sm">{match.name}</div>
+                            <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">★ {match.reputationScore || '5.0'} Rating</div>
                           </div>
                         </div>
-                        <span className="border border-amber-400/20 bg-amber-400/5 text-amber-200/90 text-[11px] font-mono px-2.5 py-0.5 rounded-full">
+                        <span className="border border-amber-500/20 dark:border-amber-400/20 bg-amber-500/10 dark:bg-amber-400/5 text-amber-800 dark:text-amber-200/90 text-[11px] font-mono px-2.5 py-0.5 rounded-full font-semibold">
                           Mutual Match
                         </span>
                       </div>
 
                       {/* Clean OFFERS & WANTS Sections */}
                       <div className="space-y-3 mb-4">
-                        {/* OFFERS */}
+                        {/* OFFERS Section */}
                         <div>
-                          <div className="text-[10px] font-mono text-slate-400 uppercase tracking-wider mb-1.5 font-semibold">OFFERS:</div>
-                          <div className="flex flex-wrap gap-1.5">
-                            {(peer.skillsOffered || []).map((s, i) => {
-                              const name = typeof s === 'string' ? s : s.skillName;
-                              const lvl = typeof s === 'object' && s.level ? ` (${s.level})` : '';
-                              return (
-                                <span key={i} className="border border-white/10 bg-white/5 text-slate-300 px-2 py-0.5 rounded text-[11px] font-mono">
-                                  {name}{lvl}
+                          <div className="text-xs font-semibold dark:text-slate-400 text-slate-500 mb-1 font-mono uppercase tracking-wider">OFFERS:</div>
+                          <div className="flex flex-wrap gap-1.5 mb-3">
+                            {match.skillsOffered && match.skillsOffered.length > 0 ? (
+                              match.skillsOffered.map((skill, i) => (
+                                <span key={i} className="px-2 py-0.5 text-xs rounded-md dark:bg-amber-400/10 bg-amber-50 border border-amber-400/20 text-amber-700 dark:text-amber-300 font-mono font-medium">
+                                  {typeof skill === 'object' ? `${skill.skillName}${skill.level ? ` (${skill.level})` : ''}` : skill}
                                 </span>
-                              );
-                            })}
+                              ))
+                            ) : (
+                              <span className="text-xs text-slate-400 font-mono">General Peer Exchange</span>
+                            )}
                           </div>
                         </div>
 
-                        {/* WANTS */}
+                        {/* WANTS Section */}
                         <div>
-                          <div className="text-[10px] font-mono text-slate-400 uppercase tracking-wider mb-1.5 font-semibold">WANTS:</div>
+                          <div className="text-xs font-semibold dark:text-slate-400 text-slate-500 mb-1 font-mono uppercase tracking-wider">WANTS:</div>
                           <div className="flex flex-wrap gap-1.5">
-                            {(peer.skillsNeeded && peer.skillsNeeded.length > 0 ? peer.skillsNeeded : ['Node.js']).map((s, i) => {
+                            {(match.skillsNeeded && match.skillsNeeded.length > 0 ? match.skillsNeeded : ['Node.js']).map((s, i) => {
                               const name = typeof s === 'string' ? s : s.skillName || s;
                               return (
-                                <span key={i} className="border border-white/10 bg-white/5 text-slate-300 px-2 py-0.5 rounded text-[11px] font-mono">
+                                <span key={i} className="dark:bg-white/5 bg-slate-100 border dark:border-white/10 border-slate-300 text-slate-800 dark:text-slate-200 px-2 py-0.5 rounded-md text-xs font-mono">
                                   {name}
                                 </span>
                               );
@@ -358,12 +361,15 @@ export default function Dashboard() {
 
                     <button
                       onClick={() => {
-                        setSwapModalPeer(peer);
-                        if (peer.skillsOffered && peer.skillsOffered.length > 0) {
-                          setRequestSkill(typeof peer.skillsOffered[0] === 'string' ? peer.skillsOffered[0] : peer.skillsOffered[0].skillName);
+                        setSwapModalPeer(match);
+                        if (match.skillsOffered && match.skillsOffered.length > 0) {
+                          const firstSkill = typeof match.skillsOffered[0] === 'object' ? match.skillsOffered[0].skillName : match.skillsOffered[0];
+                          setRequestSkill(firstSkill || '');
+                        } else {
+                          setRequestSkill('');
                         }
                       }}
-                      className="w-full py-2.5 rounded-lg bg-white text-slate-950 hover:bg-slate-200 font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 shadow-sm"
+                      className="w-full py-2.5 rounded-xl font-medium text-xs dark:bg-white dark:text-black bg-slate-900 text-white hover:opacity-90 transition-all flex items-center justify-center gap-1.5 shadow-sm font-sans"
                     >
                       <span>Initiate Swap</span>
                       <ArrowRight className="w-3.5 h-3.5" />
@@ -379,12 +385,12 @@ export default function Dashboard() {
         {activeTab === 'triangular' && (
           <div className="space-y-6">
             {loadingData ? (
-              <div className="h-48 rounded-xl bg-white/[0.02] border border-white/[0.08] animate-pulse" />
+              <div className="h-48 rounded-xl dark:bg-white/[0.02] bg-white border border-slate-200 dark:border-white/[0.08] animate-pulse" />
             ) : matches.triangularSwaps.length === 0 ? (
-              <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] backdrop-blur-xl p-12 text-center space-y-3 shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)]">
-                <Repeat className="w-10 h-10 text-slate-600 mx-auto" />
-                <h3 className="text-base font-semibold text-white">No 3-Way Chains Formed</h3>
-                <p className="text-xs text-slate-400 max-w-sm mx-auto">
+              <div className="dark:bg-white/[0.02] bg-white border dark:border-white/[0.08] border-slate-200 shadow-sm rounded-2xl p-12 text-center space-y-3">
+                <Repeat className="w-10 h-10 text-slate-400 dark:text-slate-600 mx-auto" />
+                <h3 className="text-base font-semibold dark:text-white text-slate-900">No 3-Way Chains Formed</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
                   Our cycle engine continuously searches for circular trade loops ($A \to B \to C \to A$).
                 </p>
               </div>
@@ -393,48 +399,48 @@ export default function Dashboard() {
                 {matches.triangularSwaps.map((chain, idx) => (
                   <div
                     key={idx}
-                    className="rounded-xl border border-white/[0.08] bg-white/[0.02] hover:border-amber-400/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)] transition-all p-5 space-y-4"
+                    className="dark:bg-white/[0.02] bg-white border dark:border-white/[0.08] border-slate-200 shadow-sm rounded-2xl p-5 space-y-4 transition-all"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-mono text-amber-300 flex items-center gap-1.5">
-                        <Sparkles className="w-4 h-4" /> 3-Way Exchange Loop #{idx + 1}
+                      <span className="text-xs font-mono text-amber-700 dark:text-amber-300 flex items-center gap-1.5 font-semibold">
+                        <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-300" /> 3-Way Exchange Loop #{idx + 1}
                       </span>
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-slate-300 border border-white/10">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded dark:bg-white/5 bg-slate-100 text-slate-700 dark:text-slate-300 border dark:border-white/10 border-slate-200">
                         Zero Net Cost
                       </span>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       {/* Node A */}
-                      <div className="p-3.5 rounded-lg bg-[#020306] border border-white/10 flex items-center gap-3">
-                        <div className="w-7 h-7 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-200 font-bold font-mono flex items-center justify-center text-xs">
+                      <div className="p-3.5 rounded-lg dark:bg-[#020306] bg-slate-50 border dark:border-white/10 border-slate-200 flex items-center gap-3">
+                        <div className="w-7 h-7 rounded-full bg-amber-500/10 dark:bg-amber-400/10 border border-amber-500/30 dark:border-amber-400/30 text-amber-700 dark:text-amber-200 font-bold font-mono flex items-center justify-center text-xs">
                           A
                         </div>
                         <div>
-                          <div className="text-xs font-semibold text-white">{user.name} (You)</div>
-                          <div className="text-[10px] text-slate-400 font-mono">Teaches Peer B</div>
+                          <div className="text-xs font-semibold text-slate-900 dark:text-white">{user.name} (You)</div>
+                          <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Teaches Peer B</div>
                         </div>
                       </div>
 
                       {/* Node B */}
-                      <div className="p-3.5 rounded-lg bg-[#020306] border border-white/10 flex items-center gap-3">
-                        <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 text-slate-300 font-bold font-mono flex items-center justify-center text-xs">
+                      <div className="p-3.5 rounded-lg dark:bg-[#020306] bg-slate-50 border dark:border-white/10 border-slate-200 flex items-center gap-3">
+                        <div className="w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-300 font-bold font-mono flex items-center justify-center text-xs">
                           B
                         </div>
                         <div>
-                          <div className="text-xs font-semibold text-white">{chain.userBName || 'Peer B'}</div>
-                          <div className="text-[10px] text-slate-400 font-mono">Teaches Peer C</div>
+                          <div className="text-xs font-semibold text-slate-900 dark:text-white">{chain.userBName || 'Peer B'}</div>
+                          <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Teaches Peer C</div>
                         </div>
                       </div>
 
                       {/* Node C */}
-                      <div className="p-3.5 rounded-lg bg-[#020306] border border-white/10 flex items-center gap-3">
-                        <div className="w-7 h-7 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-200 font-bold font-mono flex items-center justify-center text-xs">
+                      <div className="p-3.5 rounded-lg dark:bg-[#020306] bg-slate-50 border dark:border-white/10 border-slate-200 flex items-center gap-3">
+                        <div className="w-7 h-7 rounded-full bg-amber-500/10 dark:bg-amber-400/10 border border-amber-500/30 dark:border-amber-400/30 text-amber-700 dark:text-amber-200 font-bold font-mono flex items-center justify-center text-xs">
                           C
                         </div>
                         <div>
-                          <div className="text-xs font-semibold text-white">{chain.userCName || 'Peer C'}</div>
-                          <div className="text-[10px] text-slate-400 font-mono">Teaches You</div>
+                          <div className="text-xs font-semibold text-slate-900 dark:text-white">{chain.userCName || 'Peer C'}</div>
+                          <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Teaches You</div>
                         </div>
                       </div>
                     </div>
@@ -449,12 +455,12 @@ export default function Dashboard() {
         {activeTab === 'sessions' && (
           <div className="space-y-6">
             {loadingData ? (
-              <div className="h-44 rounded-xl bg-white/[0.02] border border-white/[0.08] animate-pulse" />
+              <div className="h-44 rounded-xl dark:bg-white/[0.02] bg-white border border-slate-200 dark:border-white/[0.08] animate-pulse" />
             ) : sessions.length === 0 ? (
-              <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] backdrop-blur-xl p-12 text-center space-y-3 shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)]">
-                <Clock className="w-10 h-10 text-slate-600 mx-auto" />
-                <h3 className="text-base font-semibold text-white">No Active Sessions</h3>
-                <p className="text-xs text-slate-400 max-w-sm mx-auto">
+              <div className="dark:bg-white/[0.02] bg-white border dark:border-white/[0.08] border-slate-200 shadow-sm rounded-2xl p-12 text-center space-y-3">
+                <Clock className="w-10 h-10 text-slate-400 dark:text-slate-600 mx-auto" />
+                <h3 className="text-base font-semibold text-slate-900 dark:text-white">No Active Sessions</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
                   Initiate a swap from Direct Matches to lock escrow and start learning.
                 </p>
               </div>
@@ -475,26 +481,26 @@ export default function Dashboard() {
                   return (
                     <div
                       key={session._id}
-                      className="rounded-xl border border-white/[0.08] bg-white/[0.02] hover:border-amber-400/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)] transition-all p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
+                      className="dark:bg-white/[0.02] bg-white border dark:border-white/[0.08] border-slate-200 shadow-sm rounded-2xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 transition-all"
                     >
                       <div className="space-y-2.5">
                         <div className="flex items-center gap-3">
-                          <span className="text-xs font-mono text-slate-400">SESSION #{session._id?.slice(-6)}</span>
+                          <span className="text-xs font-mono text-slate-500 dark:text-slate-400">SESSION #{session._id?.slice(-6)}</span>
                           <span
                             className={`text-[10px] font-mono px-2.5 py-0.5 rounded border ${
                               session.status === 'completed'
-                                ? 'bg-amber-400/10 text-amber-200 border-amber-400/20'
-                                : 'bg-white/5 text-slate-300 border-white/10'
+                                ? 'bg-amber-500/10 dark:bg-amber-400/10 text-amber-800 dark:text-amber-200 border-amber-500/20 dark:border-amber-400/20 font-semibold'
+                                : 'dark:bg-white/5 bg-slate-100 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-white/10'
                             }`}
                           >
                             {session.status === 'completed' ? 'COMPLETED & RELEASED' : 'ESCROW LOCKED'}
                           </span>
                         </div>
 
-                        <div className="text-base font-semibold text-white flex items-center gap-2 font-sans">
-                          <Code2 className="w-4 h-4 text-amber-300" />
+                        <div className="text-base font-semibold text-slate-900 dark:text-white flex items-center gap-2 font-sans">
+                          <Code2 className="w-4 h-4 text-amber-600 dark:text-amber-300" />
                           <span>{session.skillName}</span>
-                          <span className="text-xs font-normal text-slate-400">
+                          <span className="text-xs font-normal text-slate-500 dark:text-slate-400">
                             (Mentor: {mentorName} • Learner: {learnerName})
                           </span>
                         </div>
@@ -504,21 +510,21 @@ export default function Dashboard() {
                           <span
                             className={`text-xs font-mono px-3 py-1 rounded-lg border flex items-center gap-1.5 ${
                               mentorSigned
-                                ? 'bg-amber-400/10 text-amber-200 border-amber-400/30'
-                                : 'bg-[#020306] text-slate-500 border-white/10'
+                                ? 'bg-amber-500/10 dark:bg-amber-400/10 text-amber-800 dark:text-amber-200 border-amber-500/30 dark:border-amber-400/30 font-semibold'
+                                : 'dark:bg-[#020306] bg-slate-100 text-slate-500 border-slate-300 dark:border-white/10'
                             }`}
                           >
-                            {mentorSigned ? <Check className="w-3.5 h-3.5 text-amber-300" /> : '[ ]'} Mentor Confirmed
+                            {mentorSigned ? <Check className="w-3.5 h-3.5 text-amber-600 dark:text-amber-300" /> : '[ ]'} Mentor Confirmed
                           </span>
 
                           <span
                             className={`text-xs font-mono px-3 py-1 rounded-lg border flex items-center gap-1.5 ${
                               learnerSigned
-                                ? 'bg-amber-400/10 text-amber-200 border-amber-400/30'
-                                : 'bg-[#020306] text-slate-500 border-white/10'
+                                ? 'bg-amber-500/10 dark:bg-amber-400/10 text-amber-800 dark:text-amber-200 border-amber-500/30 dark:border-amber-400/30 font-semibold'
+                                : 'dark:bg-[#020306] bg-slate-100 text-slate-500 border-slate-300 dark:border-white/10'
                             }`}
                           >
-                            {learnerSigned ? <Check className="w-3.5 h-3.5 text-amber-300" /> : '[ ]'} Learner Confirmed
+                            {learnerSigned ? <Check className="w-3.5 h-3.5 text-amber-600 dark:text-amber-300" /> : '[ ]'} Learner Confirmed
                           </span>
                         </div>
                       </div>
@@ -527,14 +533,14 @@ export default function Dashboard() {
                       {canSign ? (
                         <button
                           onClick={() => handleSignEscrow(session._id)}
-                          className="w-full md:w-auto px-5 py-2.5 rounded-lg bg-white text-slate-950 hover:bg-slate-200 font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 shrink-0 shadow-sm"
+                          className="w-full md:w-auto px-5 py-2.5 rounded-xl dark:bg-white dark:text-black bg-slate-900 text-white font-semibold text-xs hover:opacity-90 transition-colors flex items-center justify-center gap-1.5 shrink-0 shadow-sm"
                         >
-                          <ShieldCheck className="w-4 h-4 text-slate-950" />
+                          <ShieldCheck className="w-4 h-4" />
                           <span>Sign & Release Escrow</span>
                         </button>
                       ) : (
-                        <div className="text-xs font-mono text-slate-400 flex items-center gap-1">
-                          <CheckCircle2 className="w-4 h-4 text-amber-300" /> Signature Logged
+                        <div className="text-xs font-mono text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                          <CheckCircle2 className="w-4 h-4 text-amber-600 dark:text-amber-300" /> Signature Logged
                         </div>
                       )}
                     </div>
@@ -548,14 +554,14 @@ export default function Dashboard() {
         {/* MODAL: OFFER NEW SKILL */}
         {isSkillModalOpen && (
           <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-[#04060A] border border-white/10 rounded-2xl p-6 max-w-md w-full space-y-5 relative shadow-2xl">
-              <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                <h3 className="text-base font-semibold text-white flex items-center gap-2">
-                  <Plus className="w-4 h-4 text-amber-300" /> Offer New Skill
+            <div className="dark:bg-[#04060A] bg-white border dark:border-white/10 border-slate-200 rounded-2xl p-6 max-w-md w-full space-y-5 relative shadow-2xl">
+              <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-3">
+                <h3 className="text-base font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                  <Plus className="w-4 h-4 text-amber-600 dark:text-amber-300" /> Offer New Skill
                 </h3>
                 <button
                   onClick={() => setIsSkillModalOpen(false)}
-                  className="text-slate-400 hover:text-white p-1"
+                  className="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -563,23 +569,23 @@ export default function Dashboard() {
 
               <form onSubmit={handleAddSkillSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">Skill Name</label>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5 font-mono">Skill Name</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Next.js, Docker, Web3"
                     value={newSkillName}
                     onChange={(e) => setNewSkillName(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-white/[0.03] border border-white/10 rounded-lg text-white placeholder-slate-500 text-xs focus:outline-none focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/20"
+                    className="w-full px-3.5 py-2.5 dark:bg-white/[0.03] bg-slate-50 border dark:border-white/10 border-slate-300 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 text-xs focus:outline-none focus:border-amber-400/50"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">Competency Level</label>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5 font-mono">Competency Level</label>
                   <select
                     value={newSkillLevel}
                     onChange={(e) => setNewSkillLevel(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-[#020306] border border-white/10 rounded-lg text-white text-xs focus:outline-none focus:border-amber-400/50"
+                    className="w-full px-3.5 py-2.5 dark:bg-[#020306] bg-slate-50 border dark:border-white/10 border-slate-300 rounded-xl text-slate-900 dark:text-white text-xs focus:outline-none focus:border-amber-400/50"
                   >
                     <option value="Beginner">Beginner</option>
                     <option value="Intermediate">Intermediate</option>
@@ -588,13 +594,13 @@ export default function Dashboard() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">Proof Link (Optional)</label>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5 font-mono">Proof Link (Optional)</label>
                   <input
                     type="url"
                     placeholder="https://github.com/your-username"
                     value={newSkillProof}
                     onChange={(e) => setNewSkillProof(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-white/[0.03] border border-white/10 rounded-lg text-white placeholder-slate-500 text-xs focus:outline-none focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/20"
+                    className="w-full px-3.5 py-2.5 dark:bg-white/[0.03] bg-slate-50 border dark:border-white/10 border-slate-300 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 text-xs focus:outline-none focus:border-amber-400/50"
                   />
                 </div>
 
@@ -602,14 +608,14 @@ export default function Dashboard() {
                   <button
                     type="button"
                     onClick={() => setIsSkillModalOpen(false)}
-                    className="w-1/3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-slate-300 font-medium text-xs hover:bg-white/10"
+                    className="w-1/3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-slate-700 dark:text-slate-300 font-medium text-xs hover:bg-slate-200 dark:hover:bg-white/10"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={addingSkillLoading}
-                    className="w-2/3 py-2.5 rounded-lg bg-white text-slate-950 font-semibold text-xs hover:bg-slate-200"
+                    className="w-2/3 py-2.5 rounded-xl dark:bg-white dark:text-black bg-slate-900 text-white font-semibold text-xs hover:opacity-90"
                   >
                     {addingSkillLoading ? 'Saving...' : 'Add Skill'}
                   </button>
@@ -619,71 +625,86 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* MODAL: INITIATE SWAP REQUEST WITH ESCROW TERMS */}
+        {/* MODAL: INITIATE SWAP REQUEST WITH FLEXIBLE COMBOBOX & ESCROW TERMS */}
         {swapModalPeer && (
           <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-[#04060A] border border-white/10 rounded-2xl p-6 max-w-md w-full space-y-5 relative shadow-2xl">
-              <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                <h3 className="text-base font-semibold text-white flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-amber-300 fill-amber-300" /> Initiate Skill Swap
+            <div className="dark:bg-[#04060A] bg-white border dark:border-white/10 border-slate-200 rounded-2xl p-6 max-w-md w-full space-y-5 relative shadow-2xl">
+              <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-3">
+                <h3 className="text-base font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-amber-600 dark:text-amber-300 fill-current" /> Initiate Skill Swap
                 </h3>
                 <button
                   onClick={() => setSwapModalPeer(null)}
-                  className="text-slate-400 hover:text-white p-1"
+                  className="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
               <form onSubmit={handleInitiateSwapSubmit} className="space-y-4">
-                <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/10">
+                {/* Peer Mentor Badge */}
+                <div className="flex items-center justify-between p-3 rounded-xl dark:bg-white/[0.03] bg-slate-50 border dark:border-white/10 border-slate-200">
                   <div>
-                    <div className="text-[10px] font-mono text-slate-400 uppercase">Peer Mentor</div>
-                    <div className="text-sm font-semibold text-white">{swapModalPeer.name}</div>
+                    <div className="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase">Peer Mentor</div>
+                    <div className="text-sm font-semibold text-slate-900 dark:text-white">{swapModalPeer?.name || 'Selected Peer'}</div>
                   </div>
-                  <span className="border border-amber-400/20 bg-amber-400/5 text-amber-200 text-[11px] font-mono px-2 py-0.5 rounded-full">
+                  <span className="border border-amber-500/20 dark:border-amber-400/20 bg-amber-500/10 dark:bg-amber-400/5 text-amber-800 dark:text-amber-200 text-[11px] font-mono px-2 py-0.5 rounded-full font-semibold">
                     Verified Peer
                   </span>
                 </div>
 
+                {/* Combobox / Hybrid Input + Datalist */}
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">Select Skill to Learn</label>
-                  <select
-                    value={requestSkill}
-                    onChange={(e) => setRequestSkill(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-[#020306] border border-white/10 rounded-lg text-white text-xs focus:outline-none focus:border-amber-400/50"
-                  >
-                    {(swapModalPeer.skillsOffered || []).map((s, i) => {
-                      const name = typeof s === 'string' ? s : s.skillName || s;
-                      return (
-                        <option key={i} value={name}>
-                          {name}
-                        </option>
-                      );
-                    })}
-                  </select>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5 font-mono">
+                    Select or Type Skill to Learn
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      list="skill-suggestions"
+                      value={requestSkill}
+                      onChange={(e) => setRequestSkill(e.target.value)}
+                      placeholder="e.g. React.js, Docker & K8s, Machine Learning"
+                      className="w-full px-3.5 py-2.5 rounded-xl text-xs border dark:border-white/10 border-slate-300 dark:bg-white/5 bg-slate-50 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400/50 font-sans"
+                    />
+                    <datalist id="skill-suggestions">
+                      {swapModalPeer?.skillsOffered && swapModalPeer.skillsOffered.length > 0 ? (
+                        swapModalPeer.skillsOffered.map((s, idx) => (
+                          <option key={idx} value={typeof s === 'object' ? s.skillName : s} />
+                        ))
+                      ) : (
+                        <>
+                          <option value="React & Frontend Architecture" />
+                          <option value="Node.js & Microservices" />
+                          <option value="Docker & Kubernetes" />
+                          <option value="Machine Learning & Data Pipelines" />
+                          <option value="UI/UX Design Systems" />
+                        </>
+                      )}
+                    </datalist>
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">Notes / Message</label>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5 font-mono">Notes / Message</label>
                   <textarea
                     rows={2}
                     placeholder="Hi! I'd love to swap skills with you..."
                     value={requestNotes}
                     onChange={(e) => setRequestNotes(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-white/[0.03] border border-white/10 rounded-lg text-white placeholder-slate-500 text-xs focus:outline-none focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/20"
+                    className="w-full px-3.5 py-2.5 dark:bg-white/[0.03] bg-slate-50 border dark:border-white/10 border-slate-300 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 text-xs focus:outline-none focus:border-amber-400/50"
                   />
                 </div>
 
                 {/* Escrow Confirmation Terms Box */}
-                <div className="p-3.5 rounded-xl bg-[#020306] border border-amber-400/20 space-y-2 text-xs">
-                  <div className="flex items-center justify-between text-amber-200 font-mono text-[11px]">
+                <div className="p-3.5 rounded-xl dark:bg-[#020306] bg-amber-50/80 border border-amber-500/30 dark:border-amber-400/20 space-y-2 text-xs">
+                  <div className="flex items-center justify-between text-amber-800 dark:text-amber-200 font-mono text-[11px] font-semibold">
                     <span className="flex items-center gap-1">
-                      <Lock className="w-3.5 h-3.5 text-amber-300" /> ESCROW TERMS
+                      <Lock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-300" /> ESCROW TERMS
                     </span>
                     <span>1.0 CREDIT</span>
                   </div>
-                  <ul className="text-[11px] text-slate-400 space-y-1 list-disc list-inside font-sans">
+                  <ul className="text-[11px] text-slate-600 dark:text-slate-400 space-y-1 list-disc list-inside font-sans">
                     <li>1 Time Credit will be locked in Dual-Signature Escrow.</li>
                     <li>Held safely until both Learner & Mentor sign upon completion.</li>
                     <li>Zero monetary fees • 100% Peer Barter Protocol.</li>
@@ -694,14 +715,14 @@ export default function Dashboard() {
                   <button
                     type="button"
                     onClick={() => setSwapModalPeer(null)}
-                    className="w-1/3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-slate-300 font-medium text-xs hover:bg-white/10 transition-colors"
+                    className="w-1/3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-slate-700 dark:text-slate-300 font-medium text-xs hover:bg-slate-200 dark:hover:bg-white/10 transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    disabled={swapRequestLoading}
-                    className="w-2/3 py-2.5 rounded-lg bg-white text-slate-950 font-semibold text-xs hover:bg-slate-200 transition-colors shadow-sm"
+                    disabled={swapRequestLoading || !requestSkill.trim()}
+                    className="w-2/3 py-2.5 rounded-xl dark:bg-white dark:text-black bg-slate-900 text-white font-semibold text-xs hover:opacity-90 transition-colors shadow-sm disabled:opacity-50"
                   >
                     {swapRequestLoading ? 'Locking Credit...' : 'Confirm & Lock 1 Escrow Credit'}
                   </button>

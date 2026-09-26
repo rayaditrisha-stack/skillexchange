@@ -48,9 +48,13 @@ exports.register = async (req, res, next) => {
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: 'An account with this campus email already exists.'
+        message: 'An account with this email address already exists.'
       });
     }
+
+    const formattedSkillsNeeded = (skillsNeeded || []).map((s) =>
+      typeof s === 'string' ? s : s.skillName || String(s)
+    );
 
     const newUser = await User.create({
       name,
@@ -58,7 +62,7 @@ exports.register = async (req, res, next) => {
       password,
       campusName: campusName || 'Campus Hub',
       skillsOffered: skillsOffered || [],
-      skillsNeeded: skillsNeeded || [],
+      skillsNeeded: formattedSkillsNeeded,
       escrowCredits: 3,
       reputationScore: 5.0
     });

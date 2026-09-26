@@ -12,9 +12,6 @@ const skillOfferedSchema = new mongoose.Schema({
   verified: { type: Boolean, default: true }
 }, { _id: true });
 
-// Campus domain validation regex: .edu or .ac.in or .edu.* or .ac.* or campus domain
-const campusEmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(edu|ac\.in|edu\.[a-z]{2}|ac\.[a-z]{2}|org)$/i;
-
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -23,16 +20,14 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: [true, 'Please provide a campus email'],
+    required: [true, 'Please provide an email'],
     unique: true,
     lowercase: true,
     trim: true,
-    validate: {
-      validator: function(v) {
-        return campusEmailRegex.test(v);
-      },
-      message: props => `${props.value} is not a valid campus email! Email must end with a recognized campus domain (e.g., .edu, .ac.in).`
-    }
+    match: [
+      /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+      'Please provide a valid email address'
+    ]
   },
   password: {
     type: String,

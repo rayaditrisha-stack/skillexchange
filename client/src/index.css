@@ -1,18 +1,30 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  color-scheme: dark;
 }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: #04060A;
-  color: #f8fafc;
   overflow-x: hidden;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+html.dark body {
+  background-color: #04060A;
+  color: #f8fafc;
+  color-scheme: dark;
+}
+
+html.light body, html:not(.dark) body {
+  background-color: #f8fafc;
+  color: #0f172a;
+  color-scheme: light;
 }
 
 /* Custom Scrollbar */
@@ -20,21 +32,31 @@ body {
   width: 8px;
   height: 8px;
 }
-::-webkit-scrollbar-track {
+html.dark ::-webkit-scrollbar-track {
   background: #04060A;
 }
-::-webkit-scrollbar-thumb {
+html.light ::-webkit-scrollbar-track, html:not(.dark) ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+html.dark ::-webkit-scrollbar-thumb {
   background: #1e293b;
   border-radius: 4px;
 }
+html.light ::-webkit-scrollbar-thumb, html:not(.dark) ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #94a3b8;
 }
 
 /* SaaS Background Gradients & Glows */
 .bg-grid-pattern {
   background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
   background-size: 24px 24px;
+}
+html.light .bg-grid-pattern, html:not(.dark) .bg-grid-pattern {
+  background-image: radial-gradient(rgba(15, 23, 42, 0.07) 1px, transparent 1px);
 }
 
 .gradient-glow-amber {
@@ -43,17 +65,24 @@ body {
 
 /* Glassmorphism Card Style */
 .glass-card {
-  background: rgba(255, 255, 255, 0.02);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+html.dark .glass-card {
+  background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.08);
+}
+html.light .glass-card, html:not(.dark) .glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(226, 232, 240, 0.8);
 }
 
 .glass-card-hover {
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .glass-card-hover:hover {
-  border-color: rgba(212, 175, 55, 0.3);
+  border-color: rgba(212, 175, 55, 0.4);
   transform: translateY(-2px);
   box-shadow: 0 12px 30px -10px rgba(212, 175, 55, 0.15);
 }
@@ -61,6 +90,11 @@ body {
 /* Gradient Text */
 .text-gradient-gold {
   background: linear-gradient(135deg, #fef08a 0%, #d4af37 50%, #b45309 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+html.light .text-gradient-gold, html:not(.dark) .text-gradient-gold {
+  background: linear-gradient(135deg, #b45309 0%, #d4af37 50%, #854d0e 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
