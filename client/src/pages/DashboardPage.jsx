@@ -184,24 +184,24 @@ export default function Dashboard() {
   ).length;
 
   return (
-    <div className="relative min-h-screen transition-colors duration-300 dark:bg-[#040507] bg-[#F7F7F8] text-slate-900 dark:text-slate-100 p-4 sm:p-6 md:p-10 font-sans selection:bg-amber-500/20 selection:text-amber-500 overflow-hidden">
+    <div className="relative min-h-screen pt-28 pb-16 px-4 sm:px-6 md:px-10 transition-colors duration-300 bg-[#FDFBF7] dark:bg-[#060709] text-slate-900 dark:text-slate-100 font-sans selection:bg-amber-500/20 selection:text-amber-500 overflow-hidden">
       <ConstellationField />
 
       {/* Main Container */}
       <div className="relative z-10 max-w-6xl mx-auto space-y-8">
         
         {/* HEADER USER TELEMETRY BANNER */}
-        <div className="dark:bg-[#08090C]/90 bg-white/90 border dark:border-white/[0.07] border-black/[0.08] shadow-2xl rounded-3xl p-6 backdrop-blur-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div className="bg-white/80 dark:bg-white/[0.03] border border-black/[0.06] dark:border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 shadow-sm dark:shadow-none flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           
           {/* User Profile */}
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-extrabold text-base flex items-center justify-center font-mono shadow-md">
+            <div className="w-12 h-12 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-black font-extrabold text-base flex items-center justify-center font-mono shadow-sm">
               {user.name ? user.name.slice(0, 2).toUpperCase() : 'U'}
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-xl font-bold dark:text-white text-slate-900 tracking-tight font-sans">{user.name}</h1>
-                <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-300 font-bold">
+                <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 font-bold">
                   ★ {user.reputationScore ? user.reputationScore.toFixed(1) : '5.0'} Rating
                 </span>
               </div>
@@ -226,7 +226,7 @@ export default function Dashboard() {
 
             <button
               onClick={() => setIsSkillModalOpen(true)}
-              className="dark:bg-white dark:text-slate-950 bg-slate-900 text-white font-mono text-xs uppercase tracking-wider font-semibold hover:opacity-90 px-4 py-2 rounded-full transition-all flex items-center gap-1.5 shadow-md"
+              className="bg-slate-900 dark:bg-white text-white dark:text-black font-mono text-xs uppercase tracking-wider font-semibold hover:opacity-90 px-4 py-2 rounded-full transition-all flex items-center gap-1.5 shadow-sm"
             >
               <Plus className="w-3.5 h-3.5 stroke-[3]" />
               <span>Offer New Skill</span>
@@ -236,12 +236,12 @@ export default function Dashboard() {
 
         {/* TAB SWITCHER */}
         <div className="flex items-center justify-between border-b dark:border-white/[0.07] border-black/[0.08] pb-4">
-          <div className="dark:bg-[#08090C]/80 bg-slate-200/70 p-1.5 rounded-2xl border dark:border-white/10 border-black/10 flex gap-1.5">
+          <div className="bg-slate-200/70 dark:bg-white/5 p-1.5 rounded-2xl border border-black/10 dark:border-white/10 flex gap-1.5">
             <button
               onClick={() => setActiveTab('direct')}
               className={`px-4 py-2 rounded-xl text-xs font-mono tracking-wider transition-colors ${
                 activeTab === 'direct'
-                  ? 'dark:bg-white dark:text-slate-950 bg-slate-900 text-white font-bold shadow-md'
+                  ? 'bg-slate-900 dark:bg-white text-white dark:text-black font-bold shadow-sm'
                   : 'dark:text-slate-400 text-slate-600 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -252,7 +252,7 @@ export default function Dashboard() {
               onClick={() => setActiveTab('triangular')}
               className={`px-4 py-2 rounded-xl text-xs font-mono tracking-wider transition-colors ${
                 activeTab === 'triangular'
-                  ? 'dark:bg-white dark:text-slate-950 bg-slate-900 text-white font-bold shadow-md'
+                  ? 'bg-slate-900 dark:bg-white text-white dark:text-black font-bold shadow-sm'
                   : 'dark:text-slate-400 text-slate-600 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -263,7 +263,7 @@ export default function Dashboard() {
               onClick={() => setActiveTab('sessions')}
               className={`px-4 py-2 rounded-xl text-xs font-mono tracking-wider transition-colors ${
                 activeTab === 'sessions'
-                  ? 'dark:bg-white dark:text-slate-950 bg-slate-900 text-white font-bold shadow-md'
+                  ? 'bg-slate-900 dark:bg-white text-white dark:text-black font-bold shadow-sm'
                   : 'dark:text-slate-400 text-slate-600 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -290,7 +290,7 @@ export default function Dashboard() {
                 ))}
               </div>
             ) : matches.directMatches.length === 0 ? (
-              <div className="dark:bg-[#08090C]/80 bg-white border dark:border-white/[0.07] border-black/[0.08] shadow-xl rounded-3xl p-12 text-center space-y-3">
+              <div className="bg-white/80 dark:bg-white/[0.03] border border-black/[0.06] dark:border-white/[0.08] backdrop-blur-xl rounded-2xl p-12 text-center space-y-3 shadow-sm dark:shadow-none">
                 <Users className="w-10 h-10 text-slate-400 dark:text-slate-600 mx-auto" />
                 <h3 className="text-base font-bold dark:text-white text-slate-900">No Direct Matches Found</h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
@@ -302,12 +302,12 @@ export default function Dashboard() {
                 {matches.directMatches.map((match, idx) => (
                   <div
                     key={match._id || idx}
-                    className="dark:bg-[#08090C]/80 bg-white/90 border dark:border-white/[0.07] border-black/[0.08] shadow-xl rounded-3xl p-6 hover:border-amber-500/30 transition-all flex flex-col justify-between space-y-4"
+                    className="bg-white/80 dark:bg-white/[0.03] border border-black/[0.06] dark:border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 shadow-sm dark:shadow-none hover:border-amber-500/30 transition-all flex flex-col justify-between space-y-4"
                   >
                     <div>
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-9 h-9 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-bold text-xs flex items-center justify-center font-mono">
+                          <div className="w-9 h-9 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-black font-bold text-xs flex items-center justify-center font-mono">
                             {match.name ? match.name.slice(0, 2).toUpperCase() : 'PE'}
                           </div>
                           <div>
@@ -315,7 +315,7 @@ export default function Dashboard() {
                             <div className="text-[10px] text-slate-500 font-mono">★ {match.reputationScore || '5.0'} Rating</div>
                           </div>
                         </div>
-                        <span className="border border-amber-500/20 bg-amber-500/10 text-amber-600 dark:text-amber-300 text-[10px] font-mono px-2.5 py-0.5 rounded-full font-bold">
+                        <span className="border border-amber-500/20 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[10px] font-mono px-2.5 py-0.5 rounded-full font-bold">
                           Mutual Match
                         </span>
                       </div>
@@ -362,7 +362,7 @@ export default function Dashboard() {
                           setRequestSkill('');
                         }
                       }}
-                      className="w-full py-2.5 rounded-full font-mono text-xs uppercase tracking-wider font-semibold dark:bg-white dark:text-slate-950 bg-slate-900 text-white hover:opacity-90 transition-all flex items-center justify-center gap-1.5 shadow-md"
+                      className="w-full py-2.5 rounded-full font-mono text-xs uppercase tracking-wider font-semibold bg-slate-900 dark:bg-white text-white dark:text-black hover:opacity-90 transition-all flex items-center justify-center gap-1.5 shadow-sm"
                     >
                       <span>Initiate Swap</span>
                       <ArrowRight className="w-3.5 h-3.5" />
@@ -378,9 +378,9 @@ export default function Dashboard() {
         {activeTab === 'triangular' && (
           <div className="space-y-6">
             {loadingData ? (
-              <div className="h-48 rounded-3xl dark:bg-[#08090C]/80 bg-white border border-slate-200 dark:border-white/[0.07] animate-pulse" />
+              <div className="h-48 rounded-2xl bg-white/80 dark:bg-white/[0.03] border border-black/[0.06] dark:border-white/[0.08] animate-pulse" />
             ) : matches.triangularSwaps.length === 0 ? (
-              <div className="dark:bg-[#08090C]/80 bg-white border dark:border-white/[0.07] border-black/[0.08] shadow-xl rounded-3xl p-12 text-center space-y-3">
+              <div className="bg-white/80 dark:bg-white/[0.03] border border-black/[0.06] dark:border-white/[0.08] backdrop-blur-xl rounded-2xl p-12 text-center space-y-3 shadow-sm dark:shadow-none">
                 <Repeat className="w-10 h-10 text-slate-400 dark:text-slate-600 mx-auto" />
                 <h3 className="text-base font-bold dark:text-white text-slate-900">No 3-Way Chains Formed</h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto font-sans">
@@ -392,7 +392,7 @@ export default function Dashboard() {
                 {matches.triangularSwaps.map((chain, idx) => (
                   <div
                     key={idx}
-                    className="dark:bg-[#08090C]/80 bg-white/90 border dark:border-white/[0.07] border-black/[0.08] shadow-xl rounded-3xl p-5 space-y-4 transition-all"
+                    className="bg-white/80 dark:bg-white/[0.03] border border-black/[0.06] dark:border-white/[0.08] backdrop-blur-xl rounded-2xl p-5 space-y-4 transition-all shadow-sm dark:shadow-none"
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-mono text-amber-500 flex items-center gap-1.5 font-bold">
@@ -445,9 +445,9 @@ export default function Dashboard() {
         {activeTab === 'sessions' && (
           <div className="space-y-6">
             {loadingData ? (
-              <div className="h-44 rounded-3xl dark:bg-[#08090C]/80 bg-white border border-slate-200 dark:border-white/[0.07] animate-pulse" />
+              <div className="h-44 rounded-2xl bg-white/80 dark:bg-white/[0.03] border border-black/[0.06] dark:border-white/[0.08] animate-pulse" />
             ) : sessions.length === 0 ? (
-              <div className="dark:bg-[#08090C]/80 bg-white border dark:border-white/[0.07] border-black/[0.08] shadow-xl rounded-3xl p-12 text-center space-y-3">
+              <div className="bg-white/80 dark:bg-white/[0.03] border border-black/[0.06] dark:border-white/[0.08] backdrop-blur-xl rounded-2xl p-12 text-center space-y-3 shadow-sm dark:shadow-none">
                 <Clock className="w-10 h-10 text-slate-400 dark:text-slate-600 mx-auto" />
                 <h3 className="text-base font-bold text-slate-900 dark:text-white">No Active Sessions</h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto font-sans">
@@ -471,7 +471,7 @@ export default function Dashboard() {
                   return (
                     <div
                       key={session._id}
-                      className="dark:bg-[#08090C]/80 bg-white/90 border dark:border-white/[0.07] border-black/[0.08] shadow-xl rounded-3xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 transition-all"
+                      className="bg-white/80 dark:bg-white/[0.03] border border-black/[0.06] dark:border-white/[0.08] backdrop-blur-xl rounded-2xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 transition-all shadow-sm dark:shadow-none"
                     >
                       <div className="space-y-2.5">
                         <div className="flex items-center gap-3">
@@ -521,7 +521,7 @@ export default function Dashboard() {
                       {canSign ? (
                         <button
                           onClick={() => handleSignEscrow(session._id)}
-                          className="w-full md:w-auto px-6 py-2.5 rounded-full dark:bg-white dark:text-slate-950 bg-slate-900 text-white font-mono text-xs uppercase tracking-wider font-semibold hover:opacity-90 transition-all flex items-center justify-center gap-1.5 shrink-0 shadow-md"
+                          className="w-full md:w-auto px-6 py-2.5 rounded-full bg-slate-900 dark:bg-white text-white dark:text-black font-mono text-xs uppercase tracking-wider font-semibold hover:opacity-90 transition-all flex items-center justify-center gap-1.5 shrink-0 shadow-sm"
                         >
                           <ShieldCheck className="w-4 h-4" />
                           <span>Sign & Release Escrow</span>
@@ -542,7 +542,7 @@ export default function Dashboard() {
         {/* MODAL: OFFER NEW SKILL */}
         {isSkillModalOpen && (
           <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-            <div className="dark:bg-[#08090C] bg-white border dark:border-white/10 border-black/10 rounded-3xl p-6 max-w-md w-full space-y-5 relative shadow-2xl">
+            <div className="bg-white dark:bg-[#08090C] border border-black/[0.08] dark:border-white/10 rounded-2xl p-6 max-w-md w-full space-y-5 relative shadow-2xl backdrop-blur-xl">
               <div className="flex items-center justify-between border-b dark:border-white/10 border-black/10 pb-3">
                 <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2 font-sans">
                   <Plus className="w-4 h-4 text-amber-500" /> Offer New Skill
@@ -564,7 +564,7 @@ export default function Dashboard() {
                     placeholder="e.g. Next.js 15, Docker, PyTorch"
                     value={newSkillName}
                     onChange={(e) => setNewSkillName(e.target.value)}
-                    className="w-full px-4 py-2.5 dark:bg-black/40 bg-slate-50 border dark:border-white/10 border-black/10 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 text-xs focus:outline-none focus:border-amber-500 font-sans"
+                    className="w-full px-4 py-2.5 dark:bg-black/40 bg-slate-50 border border-black/[0.08] dark:border-white/10 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 text-xs focus:outline-none focus:border-amber-500 font-sans"
                   />
                 </div>
 
@@ -573,7 +573,7 @@ export default function Dashboard() {
                   <select
                     value={newSkillLevel}
                     onChange={(e) => setNewSkillLevel(e.target.value)}
-                    className="w-full px-4 py-2.5 dark:bg-black/40 bg-slate-50 border dark:border-white/10 border-black/10 rounded-2xl text-slate-900 dark:text-white text-xs focus:outline-none focus:border-amber-500 font-sans"
+                    className="w-full px-4 py-2.5 dark:bg-black/40 bg-slate-50 border border-black/[0.08] dark:border-white/10 rounded-2xl text-slate-900 dark:text-white text-xs focus:outline-none focus:border-amber-500 font-sans"
                   >
                     <option value="Beginner">Beginner</option>
                     <option value="Intermediate">Intermediate</option>
@@ -588,7 +588,7 @@ export default function Dashboard() {
                     placeholder="https://github.com/your-username"
                     value={newSkillProof}
                     onChange={(e) => setNewSkillProof(e.target.value)}
-                    className="w-full px-4 py-2.5 dark:bg-black/40 bg-slate-50 border dark:border-white/10 border-black/10 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 text-xs focus:outline-none focus:border-amber-500 font-sans"
+                    className="w-full px-4 py-2.5 dark:bg-black/40 bg-slate-50 border border-black/[0.08] dark:border-white/10 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 text-xs focus:outline-none focus:border-amber-500 font-sans"
                   />
                 </div>
 
@@ -603,7 +603,7 @@ export default function Dashboard() {
                   <button
                     type="submit"
                     disabled={addingSkillLoading}
-                    className="w-2/3 py-2.5 rounded-full dark:bg-white dark:text-slate-950 bg-slate-900 text-white font-mono uppercase text-xs font-semibold hover:opacity-90"
+                    className="w-2/3 py-2.5 rounded-full bg-slate-900 dark:bg-white text-white dark:text-black font-mono uppercase text-xs font-semibold hover:opacity-90 shadow-sm"
                   >
                     {addingSkillLoading ? 'Saving...' : 'Add Skill'}
                   </button>
@@ -616,7 +616,7 @@ export default function Dashboard() {
         {/* MODAL: INITIATE SWAP REQUEST WITH FLEXIBLE COMBOBOX & ESCROW TERMS */}
         {swapModalPeer && (
           <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-            <div className="dark:bg-[#08090C] bg-white border dark:border-white/10 border-black/10 rounded-3xl p-6 max-w-md w-full space-y-5 relative shadow-2xl">
+            <div className="bg-white dark:bg-[#08090C] border border-black/[0.08] dark:border-white/10 rounded-2xl p-6 max-w-md w-full space-y-5 relative shadow-2xl backdrop-blur-xl">
               <div className="flex items-center justify-between border-b dark:border-white/10 border-black/10 pb-3">
                 <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2 font-sans">
                   <Zap className="w-4 h-4 text-amber-500 fill-current" /> Initiate Skill Swap
@@ -635,7 +635,7 @@ export default function Dashboard() {
                     <div className="text-[9px] font-mono text-slate-500 uppercase tracking-widest font-bold">PEER MENTOR</div>
                     <div className="text-sm font-bold text-slate-900 dark:text-white">{swapModalPeer?.name || 'Selected Peer'}</div>
                   </div>
-                  <span className="border border-amber-500/20 bg-amber-500/10 text-amber-600 dark:text-amber-300 text-[10px] font-mono px-2.5 py-0.5 rounded-full font-bold">
+                  <span className="border border-amber-500/20 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[10px] font-mono px-2.5 py-0.5 rounded-full font-bold">
                     Verified Peer
                   </span>
                 </div>
@@ -651,7 +651,7 @@ export default function Dashboard() {
                       value={requestSkill}
                       onChange={(e) => setRequestSkill(e.target.value)}
                       placeholder="e.g. React.js, Docker & K8s, Machine Learning"
-                      className="w-full px-4 py-2.5 rounded-2xl text-xs border dark:border-white/10 border-black/10 dark:bg-black/40 bg-slate-50 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-amber-500 font-sans"
+                      className="w-full px-4 py-2.5 rounded-2xl text-xs border border-black/[0.08] dark:border-white/10 dark:bg-black/40 bg-slate-50 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-amber-500 font-sans"
                     />
                     <datalist id="skill-suggestions">
                       {swapModalPeer?.skillsOffered && swapModalPeer.skillsOffered.length > 0 ? (
@@ -678,12 +678,12 @@ export default function Dashboard() {
                     placeholder="Hi! I'd love to swap skills with you..."
                     value={requestNotes}
                     onChange={(e) => setRequestNotes(e.target.value)}
-                    className="w-full px-4 py-2.5 dark:bg-black/40 bg-slate-50 border dark:border-white/10 border-black/10 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 text-xs focus:outline-none focus:border-amber-500 font-sans"
+                    className="w-full px-4 py-2.5 dark:bg-black/40 bg-slate-50 border border-black/[0.08] dark:border-white/10 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 text-xs focus:outline-none focus:border-amber-500 font-sans"
                   />
                 </div>
 
                 <div className="p-4 rounded-2xl dark:bg-black/50 bg-amber-50/80 border border-amber-500/30 space-y-2 text-xs">
-                  <div className="flex items-center justify-between text-amber-600 dark:text-amber-300 font-mono text-[11px] font-bold">
+                  <div className="flex items-center justify-between text-amber-600 dark:text-amber-400 font-mono text-[11px] font-bold">
                     <span className="flex items-center gap-1">
                       <Lock className="w-3.5 h-3.5 text-amber-500" /> ESCROW TERMS
                     </span>
@@ -707,7 +707,7 @@ export default function Dashboard() {
                   <button
                     type="submit"
                     disabled={swapRequestLoading || !requestSkill.trim()}
-                    className="w-2/3 py-2.5 rounded-full dark:bg-white dark:text-slate-950 bg-slate-900 text-white font-mono uppercase text-xs font-semibold hover:opacity-90 transition-colors shadow-md disabled:opacity-50"
+                    className="w-2/3 py-2.5 rounded-full bg-slate-900 dark:bg-white text-white dark:text-black font-mono uppercase text-xs font-semibold hover:opacity-90 transition-colors shadow-sm disabled:opacity-50"
                   >
                     {swapRequestLoading ? 'Locking Credit...' : 'Confirm & Lock 1 Escrow Credit'}
                   </button>
