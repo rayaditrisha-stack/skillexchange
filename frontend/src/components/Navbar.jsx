@@ -35,7 +35,7 @@ export default function Navbar() {
               SKILLMESH
             </span>
             <span className="text-[9px] tracking-[0.18em] font-mono text-amber-600 dark:text-amber-400/90 font-semibold px-2 py-0.5 rounded-full border border-amber-500/20 dark:border-amber-400/20 bg-amber-500/5 dark:bg-amber-400/5">
-              [v1.0 • KAGE PROTOCOL]
+              [v1.0 • CAMPUS PROTOCOL]
             </span>
           </div>
         </Link>
