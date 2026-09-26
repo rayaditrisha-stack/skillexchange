@@ -23,9 +23,9 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-4 z-50 w-full px-4 sm:px-6">
-      <nav className="max-w-5xl mx-auto backdrop-blur-xl border dark:border-white/10 border-black/10 dark:bg-black/50 bg-white/80 rounded-full px-5 py-2.5 shadow-2xl transition-all duration-300 flex items-center justify-between font-sans">
+      <nav className="max-w-5xl mx-auto backdrop-blur-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-[#060709]/80 text-slate-900 dark:text-white rounded-full px-5 py-2.5 shadow-2xl transition-all duration-300 flex items-center justify-between font-sans">
         
-        {/* Brand Identity: Kage Typographic Badge */}
+        {/* Brand Identity: Typographic Badge */}
         <Link to="/" className="flex items-center gap-2.5 group shrink-0">
           <div className="w-8 h-8 rounded-full bg-amber-500/10 dark:bg-amber-400/10 border border-amber-500/20 dark:border-amber-400/20 text-amber-600 dark:text-amber-300 flex items-center justify-center group-hover:bg-amber-500/20 transition-colors">
             <Sparkles className="w-4 h-4 fill-amber-500/20" />
@@ -35,7 +35,7 @@ export default function Navbar() {
               SKILLMESH
             </span>
             <span className="text-[9px] tracking-[0.18em] font-mono text-amber-600 dark:text-amber-400/90 font-semibold px-2 py-0.5 rounded-full border border-amber-500/20 dark:border-amber-400/20 bg-amber-500/5 dark:bg-amber-400/5">
-              [v1.0 • CAMPUS PROTOCOL]
+              [P2P MESH v1.0]
             </span>
           </div>
         </Link>
@@ -101,7 +101,7 @@ export default function Navbar() {
 
                 {dropdownOpen && (
                   <div
-                    className="absolute right-0 mt-3 w-52 rounded-2xl border border-slate-200 dark:border-white/10 bg-white/95 dark:bg-[#08090C]/95 backdrop-blur-2xl shadow-2xl py-2 z-50 transition-colors duration-200"
+                    className="absolute right-0 mt-3 w-52 rounded-2xl border border-slate-200 dark:border-white/10 bg-white/95 dark:bg-[#060709]/95 backdrop-blur-2xl shadow-2xl py-2 z-50 transition-colors duration-200"
                     onMouseLeave={() => setDropdownOpen(false)}
                   >
                     <div className="px-4 py-2 border-b border-slate-200 dark:border-white/10">
@@ -168,7 +168,7 @@ export default function Navbar() {
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden max-w-5xl mx-auto mt-2 border border-slate-200 dark:border-white/10 bg-white/95 dark:bg-[#08090C]/95 backdrop-blur-2xl rounded-2xl px-5 py-4 space-y-3 transition-colors duration-200 shadow-2xl">
+        <div className="md:hidden max-w-5xl mx-auto mt-2 border border-slate-200 dark:border-white/10 bg-white/95 dark:bg-[#060709]/95 backdrop-blur-2xl rounded-2xl px-5 py-4 space-y-3 transition-colors duration-200 shadow-2xl text-slate-900 dark:text-white">
           {navLinks.map((link) => (
             <Link
               key={link.path}
